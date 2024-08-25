@@ -12,6 +12,28 @@
             (#{username},#{studentId},#{password},#{createTime},#{createBy})
     </insert>
 
+    <insert id="addUserInfo">
+        insert into
+            user_info
+            (id,name,age,birthday,college,grade,org,professional)
+        values
+            (#{id},#{name},#{age},#{birthday},#{college},#{grade},#{org},#{professional})
+    </insert>
+
+    <update id="updateUserInfo">
+        update
+        user_info
+        <set>
+            <if test="name != null">name=#{name},</if>
+            <if test="age != null">age=#{age},</if>
+            <if test="birthday != null">birthday=#{birthday},</if>
+            <if test="college != null">college=#{college},</if>
+            <if test="grade != null">grade=#{grade},</if>
+            <if test="org != null">org=#{org},</if>
+            <if test="professional != null">professional=#{professional},</if>
+        </set>
+    </update>
+
     <select id="queryUser" resultType="com.gsxy.core.pojo.vo.UserVo">
         select
             u.id,u.username,u.create_time,u.create_by,u.update_time,u.update_by,
@@ -21,7 +43,7 @@
         inner join
             user_info uf
         on
-            u.id = uf.id
+            u.student_id = uf.id
         and
             u.student_id = #{number}
         limit 1

@@ -1,10 +1,9 @@
 package com.gsxy.core.controller;
 
 import com.alibaba.fastjson2.JSONArray;
-import com.gsxy.core.pojo.User;
 import com.gsxy.core.pojo.bo.*;
 import com.gsxy.core.pojo.vo.ResponseVo;
-import com.gsxy.core.service.impl.UserService;
+import com.gsxy.core.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +56,7 @@ public class UserController {
     @PostMapping("/userInfo")
     @ApiOperation("填写个人信息")
     public String userInfo(@RequestBody UserInfoBo userInfoBo){
-        return JSONArray.toJSONString(userService.userInfoBo(userInfoBo));
+        return JSONArray.toJSONString(userService.userInfo(userInfoBo));
     }
 
     /**

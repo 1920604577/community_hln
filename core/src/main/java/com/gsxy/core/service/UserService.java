@@ -1,4 +1,4 @@
-package com.gsxy.core.service.impl;
+package com.gsxy.core.service;
 
 import com.baomidou.mybatisplus.extension.api.R;
 import com.gsxy.core.pojo.bo.*;
@@ -30,5 +30,5 @@ public interface UserService {
 
     ResponseVo queryUser(String number);
 
-    ResponseVo userInfoBo(UserInfoBo userInfoBo);
+    ResponseVo userInfo(UserInfoBo userInfoBo);
 }

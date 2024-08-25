@@ -1,6 +1,7 @@
 package com.gsxy.core.mapper;
 
 import com.gsxy.core.pojo.User;
+import com.gsxy.core.pojo.UserInfo;
 import com.gsxy.core.pojo.bo.UserLoginBo;
 import com.gsxy.core.pojo.bo.UserRegBo;
 import com.gsxy.core.pojo.vo.UserVo;
@@ -21,4 +22,19 @@ public interface UserMapper {
     User userLogin(UserLoginBo userLoginBo);
 
     UserVo queryUser(String number);
+
+    /**
+     * 获取user基础信息
+     * @param loginUserId
+     * @return
+     */
+    @Select("select * from user where id = #{loginUserId}")
+    User queryUserById(Long loginUserId);
+
+    @Select("select * from user_info where id = #{studentId}")
+    UserInfo queryIsHave(String studentId);
+
+    Long addUserInfo(UserInfo userInfo);
+
+    Long updateUserInfo(UserInfo userInfo);
 }

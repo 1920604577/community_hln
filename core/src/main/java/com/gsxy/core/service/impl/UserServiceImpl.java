@@ -1,29 +1,21 @@
-package com.gsxy.core.service.impl.impl;
+package com.gsxy.core.service.impl;
 
-import com.alibaba.fastjson2.JSONArray;
 import com.gsxy.core.mapper.PermissionMapper;
 import com.gsxy.core.mapper.RoleMapper;
 import com.gsxy.core.mapper.UserMapper;
 import com.gsxy.core.mapper.UserRolePermissionMapper;
-import com.gsxy.core.pojo.Permission;
-import com.gsxy.core.pojo.Role;
-import com.gsxy.core.pojo.User;
-import com.gsxy.core.pojo.UserRolePermission;
+import com.gsxy.core.pojo.*;
 import com.gsxy.core.pojo.bo.*;
 import com.gsxy.core.pojo.vo.*;
-import com.gsxy.core.service.impl.UserService;
+import com.gsxy.core.service.UserService;
 import com.gsxy.core.util.JwtUtil;
 import com.gsxy.core.util.LoginUtils;
-import com.gsxy.core.util.ThreadLocalUtil;
-import io.netty.util.internal.ObjectUtil;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -337,10 +329,43 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseVo userInfoBo(UserInfoBo userInfoBo) {
+    public ResponseVo userInfo(UserInfoBo userInfoBo) {
 
+        Long loginUserId = LoginUtils.getLoginUserId();
+        User user = userMapper.queryUserById(loginUserId);
 
+        UserInfo userInfo = UserInfo.builder()
+                .id(user.getStudentId())
+                .professional(userInfoBo.getProfessional())
+                .grade(userInfoBo.getGrade())
+                .college(userInfoBo.getCollege())
+                .org(userInfoBo.getOrg())
+                .name(userInfoBo.getName())
+                .age(userInfoBo.getAge())
+                .birthday(userInfoBo.getBirthday())
+                .build();
 
-        return null;
+        Long isSuccess = null;
+        //看看用户信息是否已经存在
+        UserInfo info = userMapper.queryIsHave(user.getStudentId());
+        if (ObjectUtils.isEmpty(info)) {
+            isSuccess = userMapper.addUserInfo(userInfo);
+        } else {
+            isSuccess = userMapper.updateUserInfo(userInfo);
+        }
+
+        if(!ObjectUtils.isEmpty(isSuccess) && isSuccess == 0L){
+            return ResponseVo.builder()
+                    .code("500")
+                    .data(null)
+                    .message("角色修改失败")
+                    .build();
+        }
+
+        return ResponseVo.builder()
+                .message("添加成功")
+                .code("200")
+                .data(null)
+                .build();
     }
 }

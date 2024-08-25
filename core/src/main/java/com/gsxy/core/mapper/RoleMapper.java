@@ -1,6 +1,7 @@
 package com.gsxy.core.mapper;
 
 import com.gsxy.core.pojo.Role;
+import com.gsxy.core.pojo.UserInfo;
 import com.gsxy.core.pojo.vo.RoleVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
@@ -18,4 +19,5 @@ public interface RoleMapper {
     List<RoleVo> queryPageRole(Long page, Long limit);
 
     Long updateRole(Role role);
+
 }

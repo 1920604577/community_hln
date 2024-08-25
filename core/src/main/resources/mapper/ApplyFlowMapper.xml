@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gsxy.core.mapper.ApplyFlowMapper">
+
+    <insert id="addApplyFlow" parameterType="com.gsxy.core.pojo.ApplyFlow" useGeneratedKeys="true" keyProperty="id">
+        insert into
+            apply_flow
+            (name,created_by,created_time)
+        values
+            (#{name},#{createdBy},#{createdTime})
+    </insert>
+
+    <update id="deleteApplyFlow">
+        update
+            apply_flow
+        set
+            del_flag = 1
+        where
+            id = #{id}
+        limit 1
+    </update>
+
+</mapper>

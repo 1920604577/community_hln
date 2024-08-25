@@ -2,9 +2,9 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # set @@GLOBAL.sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
-    url: jdbc:mysql://127.0.0.1:3306/community_hln
-    username: root
-    password: 123456
+    url: jdbc:mysql://192.168.0.211:3306/community_hln
+    username: community_hln
+    password: eZ7zjHhWkZncw363
   servlet:
     multipart:
       max-file-size: 10000MB
