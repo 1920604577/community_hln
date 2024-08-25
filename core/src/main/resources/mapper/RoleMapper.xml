@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gsxy.core.mapper.RoleMapper">
+
+
+    <insert id="addRole" parameterType="com.gsxy.core.pojo.Role" useGeneratedKeys="true" keyProperty="id">
+        insert into
+            role
+            (name,permission,created_by,created_time)
+        values
+            (#{name},#{permission},#{createdBy},#{createdTime})
+    </insert>
+
+    <update id="deleteRole">
+        update
+            role
+        set
+            del_flag = 1
+        where
+            id = #{id}
+        limit 1
+    </update>
+
+    <update id="updateRole">
+        update
+        role
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="permission != null and permission != ''">
+                permission = #{permission},
+            </if>
+            updated_by = #{updatedBy},
+            updated_time = #{updatedTime}
+        </set>
+    </update>
+
+    <select id="queryPageRole" resultType="com.gsxy.core.pojo.vo.RoleVo">
+        select
+            id,name,permission,created_by,created_time
+        from
+            role
+        where
+            del_flag = 0
+        limit #{page},#{limit}
+    </select>
+
+</mapper>

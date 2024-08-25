@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gsxy.core.mapper.UserMapper">
+
+    <insert id="userReg" parameterType="com.gsxy.core.pojo.User" useGeneratedKeys="true" keyProperty="id">
+        insert into
+            user
+            (username,student_id,password,create_time,create_by)
+        values
+            (#{username},#{studentId},#{password},#{createTime},#{createBy})
+    </insert>
+
+    <select id="queryUser" resultType="com.gsxy.core.pojo.vo.UserVo">
+        select
+            u.id,u.username,u.create_time,u.create_by,u.update_time,u.update_by,
+            uf.name,uf.grade,uf.college,uf.org,uf.professional
+        from
+            user u
+        inner join
+            user_info uf
+        on
+            u.id = uf.id
+        and
+            u.student_id = #{number}
+        limit 1
+    </select>
+
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gsxy.core.mapper.PermissionMapper">
+
+    <insert id="addPermission" parameterType="com.gsxy.core.pojo.Permission" useGeneratedKeys="true" keyProperty="id">
+        insert into
+            permission
+            (name,created_by,created_time)
+        values
+            (#{name},#{createdBy},#{createdTime})
+    </insert>
+
+    <update id="deletePermission">
+        update
+            permission
+        set
+            del_flag = 1
+        where
+            id = #{id}
+        limit 1
+    </update>
+    <select id="queryPagePermission" resultType="com.gsxy.core.pojo.vo.PermissionVo">
+        select
+            id,
+            name,
+            created_by,
+            created_time
+        from
+            permission
+        where
+            del_flag = 0
+        limit
+            #{page},
+            #{limit}
+    </select>
+
+</mapper>
