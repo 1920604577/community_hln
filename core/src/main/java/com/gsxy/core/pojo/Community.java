@@ -1,5 +1,6 @@
 package com.gsxy.core.pojo;
 
+import com.gsxy.core.pojo.enums.CommunityStatusEnum;
 import com.gsxy.core.pojo.enums.CommunityTypeEnum;
 import lombok.*;
 
@@ -22,6 +23,10 @@ public class Community implements Serializable {
     private static final long serialVersionUID = -96369906739051157L;
 
     private Long id;
+    /**
+     * 绑定的apply_id
+     */
+    private Long applyId;
 /**
      * 社团名称
      */
@@ -42,6 +47,10 @@ public class Community implements Serializable {
      * 类型
      */
     private CommunityTypeEnum type;
+    /**
+     * 状态（启用/禁用）
+     */
+    private CommunityStatusEnum status;
 /**
      * 社长id
      */
