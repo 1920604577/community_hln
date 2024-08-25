@@ -33,6 +33,18 @@ public class ApplyController {
 
     /**
      * @author hln 2024-8-25
+     *      审批
+     * @param type
+     * @return
+     */
+    @GetMapping("/apply/{type}/{id}")
+    @ApiOperation("审批")
+    public String apply(@PathVariable String type,@PathVariable Long id){
+        return JSONArray.toJSONString(applyService.apply(type,id));
+    }
+
+    /**
+     * @author hln 2024-8-25
      *      创建审批流程
      * @param applyFlowAddBo
      * @return
@@ -53,6 +65,28 @@ public class ApplyController {
     @ApiOperation("删除审批流程（逻辑删除）")
     public String deleteApplyFlow(@PathVariable Long id){
         return JSONArray.toJSONString(applyService.deleteApplyFlow(id));
+    }
+
+    /**
+     * @author hln 2024-8-25
+     *      查询审批流程
+     * @return
+     */
+    @GetMapping("/queryApplyFlow")
+    @ApiOperation("查询审批流程")
+    public String queryApplyFlow(){
+        return JSONArray.toJSONString(applyService.queryApplyFlow());
+    }
+
+    /**
+     * @author hln 2024-8-25
+     *      审批列表
+     * @return
+     */
+    @GetMapping("/queryApply/{type}/{page}/{limit}")
+    @ApiOperation("审批列表")
+    public String queryApply(@PathVariable String type,@PathVariable Long page,@PathVariable Long limit){
+        return JSONArray.toJSONString(applyService.queryApply(type,page,limit));
     }
 
 }

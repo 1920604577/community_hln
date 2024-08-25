@@ -9,4 +9,15 @@
         community(apply_id,created_by,created_time,discription,name,teacher_id,type)
         values(#{applyId},#{createdBy},#{createdTime},#{discription},#{name},#{teacherId},#{type})
     </insert>
+
+    <update id="updateCommunity">
+        update
+            community
+        set
+            status = #{communityStatusEnum}
+        where
+            apply_id = #{id}
+        and
+            del_flag = 0
+    </update>
 </mapper>

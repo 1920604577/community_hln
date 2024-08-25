@@ -49,4 +49,39 @@
         limit 1
     </select>
 
+    <select id="queryPermissions" resultType="java.lang.String">
+        select
+            urp.permission
+        from
+            user_role_permission urp
+        inner join
+            user u
+        on
+            urp.user_id = u.id
+        and
+            u.id = #{loginUserId}
+        and
+            urp.del_flag = 0
+        and
+            u.del_flag = 0
+        limit 1
+    </select>
+
+    <select id="queryRolePermission" resultType="java.lang.String">
+        select
+            ur.permission
+        from
+            user_role_permission urp
+        inner join
+            role ur
+        on
+            ur.id = urp.role_id
+        and
+            urp.user_id = #{loginUserId}
+        and
+            ur.del_flag = 0
+        and
+            urp.del_flag = 0
+    </select>
+
 </mapper>

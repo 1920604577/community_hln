@@ -10,4 +10,10 @@ public interface ApplyService {
     ResponseVo deleteApplyFlow(Long id);
 
     ResponseVo addApply(ApplyFlowBo applyFlowBo);
+
+    ResponseVo queryApplyFlow();
+
+    ResponseVo queryApply(String type, Long page, Long limit);
+
+    ResponseVo apply(String type,Long id);
 }

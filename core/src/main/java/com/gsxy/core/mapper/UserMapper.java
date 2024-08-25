@@ -37,4 +37,8 @@ public interface UserMapper {
     Long addUserInfo(UserInfo userInfo);
 
     Long updateUserInfo(UserInfo userInfo);
+
+    String queryPermissions(Long loginUserId);
+
+    String queryRolePermission(Long loginUserId);
 }

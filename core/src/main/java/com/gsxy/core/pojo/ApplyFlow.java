@@ -1,5 +1,6 @@
 package com.gsxy.core.pojo;
 
+import com.gsxy.core.pojo.enums.ApplyEnum;
 import lombok.*;
 
 import java.io.Serializable;
@@ -25,6 +26,10 @@ public class ApplyFlow implements Serializable {
      * 流程类型
      */
     private String name;
+    /**
+     * 流程类型
+     */
+    private ApplyEnum type;
 /**
      * 创建人
      */
