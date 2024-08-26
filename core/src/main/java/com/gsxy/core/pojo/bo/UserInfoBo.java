@@ -30,5 +30,7 @@ public class UserInfoBo implements Serializable {
     private Integer age;
     @ApiModelProperty(value = "生日", example = "生日")
     private Date birthday;
+    @ApiModelProperty(value = "手机号", example = "手机号")
+    private String phone;
 
 }

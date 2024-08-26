@@ -5,17 +5,20 @@
 <mapper namespace="com.gsxy.core.mapper.ApplyMapper">
 
     <insert id="addApply" parameterType="com.gsxy.core.pojo.Apply" useGeneratedKeys="true" keyProperty="id">
-        insert into
-        apply
-            (apply_flow,created_by
-            ,
-             <if test="communityId != null">community_id</if>
-            ,created_time,message)
-        values
-            (#{applyFlow},#{createdBy}
+        INSERT INTO apply
+        (apply_flow, created_by
         ,
-             <if test="communityId != null">#{communityId}</if>
-        ,#{createdTime},#{message})
+        <if test="communityId != null">
+            community_id,
+        </if>
+         created_time, message)
+        VALUES
+        (#{applyFlow}, #{createdBy}
+        ,
+        <if test="communityId != null">
+            #{communityId},
+        </if>
+         #{createdTime}, #{message})
     </insert>
 
     <update id="updateApply">

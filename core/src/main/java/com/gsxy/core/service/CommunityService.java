@@ -14,4 +14,6 @@ public interface CommunityService {
     ResponseVo joinCommunity(Long communityId);
 
     ResponseVo quitCommunity(Long communityId);
+
+    ResponseVo queryUserByCommunity(Long communityId);
 }

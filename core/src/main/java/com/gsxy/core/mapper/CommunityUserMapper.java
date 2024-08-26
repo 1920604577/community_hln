@@ -1,9 +1,12 @@
 package com.gsxy.core.mapper;
 
 import com.gsxy.core.pojo.CommunityUser;
+import com.gsxy.core.pojo.vo.CommunityUserInfoVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 @Mapper
 public interface CommunityUserMapper {
@@ -13,4 +16,6 @@ public interface CommunityUserMapper {
 
     @Select("select * from community_user where user_id = #{userId} and community_id = #{communityId} and del_flag = 0 limit 1")
     CommunityUser qeuryUserByCommunityIdAndUserId(Long userId, Long communityId);
+
+    List<CommunityUserInfoVo> queryUserByCommunityId(Long communityId, Long loginUserId);
 }

@@ -39,6 +39,10 @@ public class UserInfo implements Serializable {
      * 年龄
      */
     private Integer age;
+    /**
+     * 手机号
+     */
+    private String phone;
 /**
      * 班级
      */

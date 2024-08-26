@@ -8,9 +8,11 @@ import com.gsxy.core.mapper.UserMapper;
 import com.gsxy.core.pojo.Apply;
 import com.gsxy.core.pojo.Community;
 import com.gsxy.core.pojo.CommunityUser;
+import com.gsxy.core.pojo.UserRolePermission;
 import com.gsxy.core.pojo.bo.CommunityAddBo;
 import com.gsxy.core.pojo.bo.CommunityUpdateBo;
 import com.gsxy.core.pojo.enums.CommunityTypeEnum;
+import com.gsxy.core.pojo.vo.CommunityUserInfoVo;
 import com.gsxy.core.pojo.vo.ResponseVo;
 import com.gsxy.core.service.CommunityService;
 import com.gsxy.core.util.LoginUtils;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class CommunityServiceImpl implements CommunityService {
@@ -47,6 +50,7 @@ public class CommunityServiceImpl implements CommunityService {
                 .applyFlow(1L)
                 .message("创建社团")
                 .createdBy(loginUserId)
+                .communityId(null)
                 .createdTime(new Date())
                 .build();
         Long isSuccess = applyMapper.addApply(apply);
@@ -190,7 +194,7 @@ public class CommunityServiceImpl implements CommunityService {
 
         if(!permissions.contains("3")){
             return ResponseVo.builder()
-                    .code("411")
+                    .code("412")
                     .data(null)
                     .message("只有社长才有该操作权限")
                     .build();
@@ -233,7 +237,7 @@ public class CommunityServiceImpl implements CommunityService {
             return ResponseVo.builder()
                     .message("您已经加入该社团")
                     .data(null)
-                    .code("412")
+                    .code("414")
                     .build();
 
         //加入社团审核申请
@@ -273,7 +277,7 @@ public class CommunityServiceImpl implements CommunityService {
             return ResponseVo.builder()
                     .message("您不在该社团无法进行此操作")
                     .data(null)
-                    .code("412")
+                    .code("413")
                     .build();
 
         //退出社团审核申请
@@ -298,6 +302,38 @@ public class CommunityServiceImpl implements CommunityService {
                 .code("200")
                 .data(null)
                 .message("退出社团审核申请已提交")
+                .build();
+    }
+
+    @Override
+    public ResponseVo queryUserByCommunity(Long communityId) {
+
+        Long loginUserId = LoginUtils.getLoginUserId();
+//        UserRolePermission userRolePermission = userMapper.queryUserRoleId(loginUserId);
+        CommunityUser communityUser = communityUserMapper.qeuryUserByCommunityIdAndUserId(loginUserId, communityId);
+        if(ObjectUtils.isEmpty(communityUser)){
+            return ResponseVo.builder()
+                    .code("413")
+                    .message("您不在该社团")
+                    .data(null)
+                    .build();
+        }
+
+        // 鉴权
+//        if(userRolePermission.getRoleId() != 3L){
+//            return ResponseVo.builder()
+//                    .code("412")
+//                    .message("只有社长有权限进行此操作")
+//                    .data(null)
+//                    .build();
+//        }
+
+        List<CommunityUserInfoVo> communityUserInfoVoList = communityUserMapper.queryUserByCommunityId(communityId,loginUserId);
+
+        return ResponseVo.builder()
+                .code("200")
+                .data(null)
+                .message("查询成功")
                 .build();
     }
 }

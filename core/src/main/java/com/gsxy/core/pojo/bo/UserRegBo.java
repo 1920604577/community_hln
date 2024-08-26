@@ -20,5 +20,7 @@ public class UserRegBo implements Serializable {
     private String studentId;
     @ApiModelProperty(value = "注册类型（学生/老师）", example = "注册类型（学生/老师）")
     private String regType;
+    @ApiModelProperty(value = "确认密码", example = "确认密码")
+    private String confirmPassword;
 
 }

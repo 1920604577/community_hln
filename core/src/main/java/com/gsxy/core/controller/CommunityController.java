@@ -110,4 +110,15 @@ public class CommunityController {
         return JSONArray.toJSONString(communityService.quitCommunity(communityId));
     }
 
+    /**
+     * @author hln 2024-8-26
+     *      查看指定社团所有人员
+     * @return
+     */
+    @GetMapping("/queryUserByCommunity/{communityId}")
+    @ApiOperation("查看指定社团所有人员信息")
+    public String queryUserByCommunity(@PathVariable Long communityId){
+        return JSONArray.toJSONString(communityService.queryUserByCommunity(communityId));
+    }
+
 }

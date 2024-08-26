@@ -207,6 +207,19 @@ public class ApplyServiceImpl implements ApplyService {
                         .roleId(3L)
                         .build();
                 userServiceImpl.addUserRolePermission(userRolePermissionAddBo);
+                //为指导教师绑定角色权限
+                UserRolePermissionAddBo userRolePermissionTeacher = UserRolePermissionAddBo.builder()
+                        .userId(community.getTeacherId())
+                        .roleId(4L)
+                        .build();
+                userServiceImpl.addUserRolePermission(userRolePermissionTeacher);
+                CommunityUser communityUser = CommunityUser.builder()
+                        .createdTime(new Date())
+                        .communityId(communityId)
+                        .userId(community.getCreatedBy())
+                        .createdBy(community.getCreatedBy())
+                        .build();
+                communityUserMapper.add(communityUser);
             } else if (type.equals("CHANGE_COMMUNITY")) {//修改社团信息
                 applyEnum = ApplyEnum.CHANGE_COMMUNITY;
                 applyMapper.updateApply(id, ApplyEnum.PASS);
