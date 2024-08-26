@@ -13,7 +13,7 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface UserMapper {
 
-    @Select("select id from user where student_id = #{studentId}")
+    @Select("select id from user where student_id = #{studentId} and del_flag = 0")
     Long isUserReg(UserRegBo userRegBo);
 
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")

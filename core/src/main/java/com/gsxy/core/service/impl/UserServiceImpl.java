@@ -32,16 +32,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseVo userReg(UserRegBo userRegBo) {
 
-        Long isReg = userMapper.isUserReg(userRegBo);
-
-        if(!ObjectUtils.isEmpty(isReg)){
-           return ResponseVo.builder()
-                   .message("用户名已存在")
-                   .data(null)
-                   .code("400")
-                   .build();
-        }
-
         //此处判断一下注册类型是老师还是学生（咱们学校老师工号是4位,学生学号是10位,但是考虑到后期开源所以这里写的通用一些）
         if (userRegBo.getRegType().equals("STUDENT") && userRegBo.getStudentId().length() != 10)
             return ResponseVo.builder()
@@ -62,6 +52,17 @@ public class UserServiceImpl implements UserService {
                 .studentId(userRegBo.getRegType().equals("STUDENT") ? "S" + userRegBo.getStudentId() : "T" + userRegBo.getStudentId())
                 .createTime(new Date())
                 .build();
+
+        userRegBo.setStudentId(user.getStudentId());
+        Long isReg = userMapper.isUserReg(userRegBo);
+
+        if(!ObjectUtils.isEmpty(isReg)){
+            return ResponseVo.builder()
+                    .message("用户名已存在")
+                    .data(null)
+                    .code("400")
+                    .build();
+        }
 
         //注意这里已经直接通过mybatis返回了id主键
         Long isRegSuccess = userMapper.userReg(user);
