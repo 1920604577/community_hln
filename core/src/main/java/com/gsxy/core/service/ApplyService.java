@@ -15,5 +15,5 @@ public interface ApplyService {
 
     ResponseVo queryApply(String type, Long page, Long limit);
 
-    ResponseVo apply(String type,Long id);
+    ResponseVo apply(String type,Long id,Long communityId);
 }

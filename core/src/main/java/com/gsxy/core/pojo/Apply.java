@@ -30,6 +30,10 @@ public class Apply implements Serializable {
      * 审核流程
      */
     private Long applyFlow;
+    /**
+     * 社团id
+     */
+    private Long communityId;
 /**
      * 审核状态
      */

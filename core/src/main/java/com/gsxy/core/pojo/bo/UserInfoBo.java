@@ -18,6 +18,8 @@ public class UserInfoBo implements Serializable {
     private String name;
     @ApiModelProperty(value = "学院", example = "学院")
     private Integer college;
+    @ApiModelProperty(value = "身份证号", example = "身份证号")
+    private String cardCode;
     @ApiModelProperty(value = "班级", example = "班级")
     private Integer org;
     @ApiModelProperty(value = "年级", example = "年级")

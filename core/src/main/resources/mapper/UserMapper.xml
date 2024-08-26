@@ -37,7 +37,7 @@
     <select id="queryUser" resultType="com.gsxy.core.pojo.vo.UserVo">
         select
             u.id,u.username,u.create_time,u.create_by,u.update_time,u.update_by,
-            uf.name,uf.grade,uf.college,uf.org,uf.professional
+            uf.name,uf.grade,uf.college,uf.org,uf.professional,uf.card_code
         from
             user u
         inner join

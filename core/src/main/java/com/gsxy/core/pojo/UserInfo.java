@@ -32,6 +32,10 @@ public class UserInfo implements Serializable {
      */
     private Integer college;
     /**
+     * 身份证号
+     */
+    private String cardCode;
+    /**
      * 年龄
      */
     private Integer age;

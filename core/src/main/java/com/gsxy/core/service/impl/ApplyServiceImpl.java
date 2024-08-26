@@ -6,22 +6,28 @@ import com.gsxy.core.mapper.CommunityMapper;
 import com.gsxy.core.mapper.UserMapper;
 import com.gsxy.core.pojo.Apply;
 import com.gsxy.core.pojo.ApplyFlow;
+import com.gsxy.core.pojo.Community;
 import com.gsxy.core.pojo.bo.ApplyFlowAddBo;
 import com.gsxy.core.pojo.bo.ApplyFlowBo;
+import com.gsxy.core.pojo.bo.UserRolePermissionAddBo;
 import com.gsxy.core.pojo.enums.ApplyEnum;
 import com.gsxy.core.pojo.enums.CommunityStatusEnum;
+import com.gsxy.core.pojo.enums.CommunityTypeEnum;
 import com.gsxy.core.pojo.vo.ApplyFlowVo;
 import com.gsxy.core.pojo.vo.ApplyVo;
 import com.gsxy.core.pojo.vo.ResponseVo;
 import com.gsxy.core.service.ApplyService;
 import com.gsxy.core.util.LoginUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +41,10 @@ public class ApplyServiceImpl implements ApplyService {
     private UserMapper userMapper;
     @Autowired
     private CommunityMapper communityMapper;
+    @Autowired
+    private UserServiceImpl userServiceImpl;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public ResponseVo addApplyFlow(ApplyFlowAddBo applyFlowAddBo) {
@@ -147,13 +157,10 @@ public class ApplyServiceImpl implements ApplyService {
 
     @Override
     @Transactional
-    public ResponseVo apply(String type, Long id) {
+    public ResponseVo apply(String type, Long id,Long communityId) {
 
         //查看当前登录用户是否有审核的权限（目前只有admin有）
-        Long loginUserId = LoginUtils.getLoginUserId();
-        String userPermission = userMapper.queryPermissions(loginUserId);//当前用户附加权限
-        String userRolePermission = userMapper.queryRolePermission(loginUserId);//当前用户绑定角色所拥有的权限集合
-        String permissions = userPermission + userRolePermission;
+        String permissions = LoginUtils.getUserPermission(userMapper);
 
         if(!permissions.contains("1")){
             return ResponseVo.builder()
@@ -165,10 +172,53 @@ public class ApplyServiceImpl implements ApplyService {
 
         //进入审核
         ApplyEnum applyEnum = null;
-        if(type.equals("COMMUNITY_APPLY")) {
+        if(type.equals("COMMUNITY_APPLY")) { //创建社团
             applyEnum = ApplyEnum.COMMUNITY_APPLY;
             applyMapper.updateApply(id,ApplyEnum.PASS);
             communityMapper.updateCommunity(id, CommunityStatusEnum.ENABLE);
+            //都成功之后给该社团创建者绑定一个身份
+            Community community = communityMapper.queryCommunityById(id);
+            UserRolePermissionAddBo userRolePermissionAddBo = UserRolePermissionAddBo.builder()
+                    .userId(community.getCreatedBy())
+                    .roleId(3L)
+                    .build();
+            userServiceImpl.addUserRolePermission(userRolePermissionAddBo);
+        } else if (type.equals("CHANGE_COMMUNITY")) {//修改社团信息
+            applyEnum = ApplyEnum.CHANGE_COMMUNITY;
+            applyMapper.updateApply(id,ApplyEnum.PASS);
+
+            //此时从redis中获取数据
+            Community communityTemp = communityMapper.queryCommunityByCommunityId(communityId);
+            HashOperations<String, String, Object> hashOps = redisTemplate.opsForHash();
+            String key = "update:community:" + communityId;
+            Map<String, Object> entries = hashOps.entries(key);
+
+            CommunityTypeEnum communityTypeEnum = null;
+            if(!ObjectUtils.isEmpty(entries.get("type")) && entries.get("type").equals("ORDINARY")){
+                communityTypeEnum = CommunityTypeEnum.ORDINARY;
+            } else if (!ObjectUtils.isEmpty(entries.get("type")) && entries.get("type").equals("PROFESSIONAL")) {
+                communityTypeEnum = CommunityTypeEnum.PROFESSIONAL;
+            }
+
+            Community community = Community.builder()
+                    .id(communityTemp.getId())
+                    .name((String) entries.get("name") == null ? null : (String) entries.get("name"))
+                    .discription((String) entries.get("description") == null ? null : (String) entries.get("description"))
+                    .teacherId((Long) entries.get("teacherId") == null ? null : (Long) entries.get("teacherId"))
+                    .type(communityTypeEnum)
+                    .createdBy((Long) entries.get("createdBy") == null ? null : (Long) entries.get("createdBy"))
+                    .build();
+
+            communityMapper.updateCommunityInfo(community);
+            //都成功之后如果社长被变更给新的社团创建者绑定一个身份
+            if(!ObjectUtils.isEmpty(community.getCreatedBy()) && community.getCreatedBy() != 0L){
+                UserRolePermissionAddBo userRolePermissionAddBo = UserRolePermissionAddBo.builder()
+                        .userId(community.getCreatedBy())
+                        .roleId(3L)
+                        .build();
+                userServiceImpl.addUserRolePermission(userRolePermissionAddBo);
+                userServiceImpl.deleteUserRolePermission(communityTemp.getCreatedBy());
+            }
         }
 
         return ResponseVo.builder()

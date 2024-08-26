@@ -7,9 +7,15 @@
     <insert id="addApply" parameterType="com.gsxy.core.pojo.Apply" useGeneratedKeys="true" keyProperty="id">
         insert into
         apply
-            (apply_flow,created_by,created_time,message)
+            (apply_flow,created_by
+            ,
+             <if test="communityId != null">community_id</if>
+            ,created_time,message)
         values
-            (#{applyFlow},#{createdBy},#{createdTime},#{message})
+            (#{applyFlow},#{createdBy}
+        ,
+             <if test="communityId != null">#{communityId}</if>
+        ,#{createdTime},#{message})
     </insert>
 
     <update id="updateApply">
@@ -25,7 +31,7 @@
 
     <select id="queryApply" resultType="com.gsxy.core.pojo.vo.ApplyVo">
         select
-            a.id,a.message,a.status,a.created_by,a.created_time,a.updated_by,a.updated_time
+            a.id,a.message,a.status,a.created_by,a.created_time,a.updated_by,a.community_id as communityId,a.updated_time
         from
             apply a
         inner join

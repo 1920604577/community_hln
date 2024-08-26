@@ -24,5 +24,6 @@ public class UserVo implements Serializable {
     private Date createdTime;//创建时间
     private Long updateBy;//修改人
     private Date updateTime;//修改时间
+    private String cardCode;//身份证号
 
 }

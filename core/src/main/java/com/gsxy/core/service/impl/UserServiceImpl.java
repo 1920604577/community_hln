@@ -331,6 +331,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseVo userInfo(UserInfoBo userInfoBo) {
 
+        if(userInfoBo.getCardCode().length() != 18){
+            return ResponseVo.builder()
+                    .code("411")
+                    .data(null)
+                    .message("身份证号长度应为18位")
+                    .build();
+        }
+
         Long loginUserId = LoginUtils.getLoginUserId();
         User user = userMapper.queryUserById(loginUserId);
 
@@ -338,6 +346,7 @@ public class UserServiceImpl implements UserService {
                 .id(user.getStudentId())
                 .professional(userInfoBo.getProfessional())
                 .grade(userInfoBo.getGrade())
+                .cardCode(userInfoBo.getCardCode())
                 .college(userInfoBo.getCollege())
                 .org(userInfoBo.getOrg())
                 .name(userInfoBo.getName())

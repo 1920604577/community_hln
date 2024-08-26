@@ -48,6 +48,10 @@ public class ApplyVo implements Serializable {
      */
     private String updatedByText;
     /**
+     * 社团id
+     */
+    private Long communityId;
+    /**
      * 修改时间
      */
     private Date updatedTime;

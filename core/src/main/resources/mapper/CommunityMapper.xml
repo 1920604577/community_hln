@@ -20,4 +20,41 @@
         and
             del_flag = 0
     </update>
+
+    <update id="delete">
+        update
+            community
+        set
+            del_flag = 1
+        where
+            id = #{id}
+    </update>
+
+    <update id="updateCommunityInfo">
+        update
+        community
+        <set>
+            <if test="discription != null and discription != ''">
+                discription = #{discription},
+            </if>
+            <if test="name != null and name != ''">
+                `name` = #{name},
+            </if>
+            <if test="teacherId != null">
+                teacher_id = #{teacherId},
+            </if>
+            <if test="type != null">
+                `type` = #{type},
+            </if>
+            <if test="createdBy != null">
+                created_by = #{createdBy}
+            </if>
+        </set>
+        where
+            id = #{id}
+        and
+            del_flag = 0
+        limit 1
+    </update>
+
 </mapper>

@@ -37,10 +37,10 @@ public class ApplyController {
      * @param type
      * @return
      */
-    @GetMapping("/apply/{type}/{id}")
+    @GetMapping("/apply/{type}/{id}/{communityId}")
     @ApiOperation("审批")
-    public String apply(@PathVariable String type,@PathVariable Long id){
-        return JSONArray.toJSONString(applyService.apply(type,id));
+    public String apply(@PathVariable String type,@PathVariable Long id,@PathVariable Long communityId){
+        return JSONArray.toJSONString(applyService.apply(type,id,communityId));
     }
 
     /**
