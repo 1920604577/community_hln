@@ -30,7 +30,13 @@ public class CommunityController {
     public String addCommunity(@RequestBody CommunityAddBo communityAddBo){
 
         if(communityAddBo == null){
-            JSONArray.toJSONString(new ResponseVo("参数为null",null,"0x455"));
+            JSONArray.toJSONString(
+                    ResponseVo.builder()
+                            .code("0x455")
+                            .message("参数为null")
+                            .data(null)
+                            .build()
+            );
         }
 
         return JSONArray.toJSONString(communityService.addCommunity(communityAddBo));
@@ -47,7 +53,13 @@ public class CommunityController {
     public String updateCommunity(@RequestBody CommunityUpdateBo communityUpdateBo){
 
         if(communityUpdateBo == null){
-            JSONArray.toJSONString(new ResponseVo("参数为null",null,"0x455"));
+            JSONArray.toJSONString(
+                    ResponseVo.builder()
+                            .code("0x455")
+                            .message("参数为null")
+                            .data(null)
+                            .build()
+            );
         }
 
         return JSONArray.toJSONString(communityService.updateCommunity(communityUpdateBo));
@@ -64,10 +76,38 @@ public class CommunityController {
     public String deleteCommunity(@PathVariable Long id){
 
         if(id == null){
-            JSONArray.toJSONString(new ResponseVo("参数为null",null,"0x455"));
+            JSONArray.toJSONString(
+                    ResponseVo.builder()
+                            .code("0x455")
+                            .message("参数为null")
+                            .data(null)
+                            .build()
+            );
         }
 
         return JSONArray.toJSONString(communityService.deleteCommunity(id));
+    }
+
+    /**
+     * @author hln 2024-8-26
+     *      申请加入社团
+     * @return
+     */
+    @GetMapping("/joinCommunity/{communityId}")
+    @ApiOperation("申请加入社团")
+    public String joinCommunity(@PathVariable Long communityId){
+        return JSONArray.toJSONString(communityService.joinCommunity(communityId));
+    }
+
+    /**
+     * @author hln 2024-8-26
+     *      申请退出社团
+     * @return
+     */
+    @GetMapping("/quitCommunity/{communityId}")
+    @ApiOperation("申请退出社团")
+    public String quitCommunity(@PathVariable Long communityId){
+        return JSONArray.toJSONString(communityService.quitCommunity(communityId));
     }
 
 }

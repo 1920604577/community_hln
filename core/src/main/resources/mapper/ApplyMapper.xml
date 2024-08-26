@@ -46,4 +46,57 @@
             #{page},#{limit}
     </select>
 
+    <select id="queryApplyByCommunityId" resultType="com.gsxy.core.pojo.vo.ApplyVo">
+        select
+            a.id,a.message,a.status,a.created_by,a.created_time,a.updated_by,a.community_id as communityId,a.updated_time
+        from
+            apply a
+        inner join
+            apply_flow af
+        on
+            a.apply_flow = af.id
+        and
+            a.del_flag = 0
+        and
+            a.community_id = #{communityId}
+        where
+            af.type = #{applyEnum}
+        limit
+            #{page},#{limit}
+    </select>
+
+    <select id="queryApplyCount" resultType="java.lang.Long">
+        select
+            count(1)
+        from
+            apply a
+                inner join
+            apply_flow af
+            on
+                a.apply_flow = af.id
+                    and
+                a.del_flag = 0
+                    and
+                a.community_id = #{communityId}
+        where
+            af.type = #{applyEnum}
+    </select>
+
+    <select id="queryApplyByCommunityIdCount" resultType="java.lang.Long">
+        select
+            count(1)
+        from
+            apply a
+                inner join
+            apply_flow af
+            on
+                a.apply_flow = af.id
+                    and
+                a.del_flag = 0
+                    and
+                a.community_id = #{communityId}
+        where
+            af.type = #{applyEnum}
+    </select>
+
 </mapper>

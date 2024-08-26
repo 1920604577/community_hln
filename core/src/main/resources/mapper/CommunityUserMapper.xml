@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gsxy.core.mapper.CommunityUserMapper">
+
+    <insert id="add" parameterType="com.gsxy.core.pojo.CommunityUser" useGeneratedKeys="true" keyProperty="id">
+        insert into
+        community_user
+        (community_id,user_id,created_by,created_time)
+        values
+        (#{communityId},#{userId},#{createdBy},#{createdTime})
+    </insert>
+
+</mapper>

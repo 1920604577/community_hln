@@ -36,4 +36,16 @@
             #{limit}
     </select>
 
+    <select id="queryPagePermissionCount" resultType="java.lang.Long">
+        select
+            count(id)
+        from
+            permission
+        where
+            del_flag = 0
+        limit
+            #{page},
+            #{limit}
+    </select>
+
 </mapper>

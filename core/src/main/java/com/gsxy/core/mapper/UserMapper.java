@@ -2,6 +2,7 @@ package com.gsxy.core.mapper;
 
 import com.gsxy.core.pojo.User;
 import com.gsxy.core.pojo.UserInfo;
+import com.gsxy.core.pojo.UserRolePermission;
 import com.gsxy.core.pojo.bo.UserLoginBo;
 import com.gsxy.core.pojo.bo.UserRegBo;
 import com.gsxy.core.pojo.vo.UserVo;
@@ -41,4 +42,7 @@ public interface UserMapper {
     String queryPermissions(Long loginUserId);
 
     String queryRolePermission(Long loginUserId);
+
+    @Select("select * from user_role_permission where user_id = #{loginUserId} limit 1")
+    UserRolePermission queryUserRoleId(Long loginUserId);
 }

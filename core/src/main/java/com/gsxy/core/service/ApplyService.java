@@ -13,7 +13,7 @@ public interface ApplyService {
 
     ResponseVo queryApplyFlow();
 
-    ResponseVo queryApply(String type, Long page, Long limit);
+    ResponseVo queryApply(String type, Long page, Long limit,Long communityId);
 
     ResponseVo apply(String type,Long id,Long communityId);
 }

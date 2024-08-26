@@ -23,4 +23,6 @@ public interface CommunityMapper {
 
     @Select("select * from community where id = #{communityId} limit 1")
     Community queryCommunityByCommunityId(Long communityId);
+
+    void deleteCommunityUser(Long communityId, Long userId);
 }

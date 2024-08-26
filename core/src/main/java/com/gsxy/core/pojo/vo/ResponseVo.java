@@ -17,6 +17,7 @@ public class ResponseVo<T> {
     private String message; //返回信息
     private T data;    //返回数据
     private String code;    //响应状态码
+    private Long count;    //数组总数长度（用来返回分页数据总数）
 
 //    @Override
 //    public String toString() {

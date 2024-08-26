@@ -16,4 +16,6 @@ public interface PermissionMapper {
     Long deletePermission(Long id);
 
     List<PermissionVo> queryPagePermission(Long page, Long limit);
+
+    Long queryPagePermissionCount(Long page, Long limit);
 }

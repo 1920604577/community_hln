@@ -35,7 +35,11 @@ public class UserServiceImpl implements UserService {
         Long isReg = userMapper.isUserReg(userRegBo);
 
         if(!ObjectUtils.isEmpty(isReg)){
-           return new ResponseVo("用户名已存在",null,"400");
+           return ResponseVo.builder()
+                   .message("用户名已存在")
+                   .data(null)
+                   .code("400")
+                   .build();
         }
 
         //此处判断一下注册类型是老师还是学生（咱们学校老师工号是4位,学生学号是10位,但是考虑到后期开源所以这里写的通用一些）
@@ -224,9 +228,11 @@ public class UserServiceImpl implements UserService {
 
         page = (page - 1) * limit;
         List<PermissionVo> permissionVoList = permissionMapper.queryPagePermission(page,limit);
+        Long count = permissionMapper.queryPagePermissionCount(page,limit);
 
         return ResponseVo.builder()
                 .code("200")
+                .count(count)
                 .data(permissionVoList)
                 .message("权限查询成功")
                 .build();

@@ -3,9 +3,11 @@ package com.gsxy.core.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gsxy.core.mapper.ApplyMapper;
 import com.gsxy.core.mapper.CommunityMapper;
+import com.gsxy.core.mapper.CommunityUserMapper;
 import com.gsxy.core.mapper.UserMapper;
 import com.gsxy.core.pojo.Apply;
 import com.gsxy.core.pojo.Community;
+import com.gsxy.core.pojo.CommunityUser;
 import com.gsxy.core.pojo.bo.CommunityAddBo;
 import com.gsxy.core.pojo.bo.CommunityUpdateBo;
 import com.gsxy.core.pojo.enums.CommunityTypeEnum;
@@ -25,6 +27,8 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Autowired
     private CommunityMapper communityMapper;
+    @Autowired
+    private CommunityUserMapper communityUserMapper;
     @Autowired
     private ApplyMapper applyMapper;
     @Autowired
@@ -214,6 +218,86 @@ public class CommunityServiceImpl implements CommunityService {
                 .code("200")
                 .data(null)
                 .message("社团注销申请已提交")
+                .build();
+    }
+
+    @Override
+    public ResponseVo joinCommunity(Long communityId) {
+
+        Long loginUserId = LoginUtils.getLoginUserId();
+
+        //判断当前用户是否已经加入该社团
+        CommunityUser communityUser = communityUserMapper.qeuryUserByCommunityIdAndUserId(loginUserId,communityId);
+
+        if(!ObjectUtils.isEmpty(communityUser) && communityUser.getId() != 0L)
+            return ResponseVo.builder()
+                    .message("您已经加入该社团")
+                    .data(null)
+                    .code("412")
+                    .build();
+
+        //加入社团审核申请
+        Apply apply = Apply.builder()
+                .applyFlow(4L)
+                .message("加入社团审核申请")
+                .createdBy(loginUserId)
+                .createdTime(new Date())
+                .communityId(communityId)
+                .build();
+        Long isSuccess = applyMapper.addApply(apply);
+
+        if (!ObjectUtils.isEmpty(isSuccess) && isSuccess == 0L){
+            return ResponseVo.builder()
+                    .code("500")
+                    .data(null)
+                    .message("加入社团审核申请提交失败")
+                    .build();
+        }
+
+        return ResponseVo.builder()
+                .code("200")
+                .data(null)
+                .message("加入社团审核申请已提交")
+                .build();
+    }
+
+    @Override
+    public ResponseVo quitCommunity(Long communityId) {
+
+        Long loginUserId = LoginUtils.getLoginUserId();
+
+        //判断当前用户是否不在该社团
+        CommunityUser communityUser = communityUserMapper.qeuryUserByCommunityIdAndUserId(loginUserId,communityId);
+
+        if(!ObjectUtils.isEmpty(communityUser) && communityUser.getId() == 0L)
+            return ResponseVo.builder()
+                    .message("您不在该社团无法进行此操作")
+                    .data(null)
+                    .code("412")
+                    .build();
+
+        //退出社团审核申请
+        Apply apply = Apply.builder()
+                .applyFlow(5L)
+                .message("退出社团审核申请")
+                .createdBy(loginUserId)
+                .createdTime(new Date())
+                .communityId(communityId)
+                .build();
+        Long isSuccess = applyMapper.addApply(apply);
+
+        if (!ObjectUtils.isEmpty(isSuccess) && isSuccess == 0L){
+            return ResponseVo.builder()
+                    .code("500")
+                    .data(null)
+                    .message("退出社团审核申请提交失败")
+                    .build();
+        }
+
+        return ResponseVo.builder()
+                .code("200")
+                .data(null)
+                .message("退出社团审核申请已提交")
                 .build();
     }
 }

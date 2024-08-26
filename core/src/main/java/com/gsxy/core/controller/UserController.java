@@ -41,7 +41,13 @@ public class UserController {
     public String userLogin(@RequestBody UserLoginBo userLoginBo){
 
         if(userLoginBo == null){
-            JSONArray.toJSONString(new ResponseVo("参数为null",null,"0x455"));
+            JSONArray.toJSONString(
+                    ResponseVo.builder()
+                            .code("0x455")
+                            .message("参数为null")
+                            .data(null)
+                            .build()
+            );
         }
 
         return JSONArray.toJSONString(userService.userLogin(userLoginBo));
@@ -82,7 +88,13 @@ public class UserController {
     public String addPermission(@RequestBody PermissionAddBo permissionAddBo){
 
         if(permissionAddBo == null){
-            JSONArray.toJSONString(new ResponseVo("参数为null",null,"0x455"));
+            JSONArray.toJSONString(
+                    ResponseVo.builder()
+                            .code("0x455")
+                            .message("参数为null")
+                            .data(null)
+                            .build()
+            );
         }
 
         return JSONArray.toJSONString(userService.addPermission(permissionAddBo));
@@ -99,7 +111,13 @@ public class UserController {
     public String deletePermission(@PathVariable Long id){
 
         if(id == null && id != 0L){
-            JSONArray.toJSONString(new ResponseVo("参数为null",null,"0x455"));
+            JSONArray.toJSONString(
+                    ResponseVo.builder()
+                            .code("0x455")
+                            .message("参数为null")
+                            .data(null)
+                            .build()
+            );
         }
 
         return JSONArray.toJSONString(userService.deletePermission(id));
@@ -127,7 +145,13 @@ public class UserController {
     public String addRole(@RequestBody RoleAddBo roleAddBo){
 
         if(roleAddBo == null){
-            JSONArray.toJSONString(new ResponseVo("参数为null",null,"0x455"));
+            JSONArray.toJSONString(
+                    ResponseVo.builder()
+                            .code("0x455")
+                            .message("参数为null")
+                            .data(null)
+                            .build()
+            );
         }
 
         return JSONArray.toJSONString(userService.addRole(roleAddBo));
@@ -144,7 +168,13 @@ public class UserController {
     public String updateRole(@RequestBody RoleUpdateBo roleUpdateBo){
 
         if(roleUpdateBo == null){
-            JSONArray.toJSONString(new ResponseVo("参数为null",null,"0x455"));
+            JSONArray.toJSONString(
+                    ResponseVo.builder()
+                            .code("0x455")
+                            .message("参数为null")
+                            .data(null)
+                            .build()
+            );
         }
 
         return JSONArray.toJSONString(userService.updateRole(roleUpdateBo));
@@ -172,7 +202,13 @@ public class UserController {
     public String deleteRole(@PathVariable Long id){
 
         if(id == null && id != 0L){
-            JSONArray.toJSONString(new ResponseVo("参数为null",null,"0x455"));
+            JSONArray.toJSONString(
+                    ResponseVo.builder()
+                            .code("0x455")
+                            .message("参数为null")
+                            .data(null)
+                            .build()
+            );
         }
 
         return JSONArray.toJSONString(userService.deleteRole(id));
@@ -189,7 +225,13 @@ public class UserController {
     public String addUserRolePermission(@RequestBody UserRolePermissionAddBo userRolePermissionAddBo){
 
         if(userRolePermissionAddBo == null){
-            JSONArray.toJSONString(new ResponseVo("参数为null",null,"0x455"));
+            JSONArray.toJSONString(
+                    ResponseVo.builder()
+                            .code("0x455")
+                            .message("参数为null")
+                            .data(null)
+                            .build()
+            );
         }
 
         return JSONArray.toJSONString(userService.addUserRolePermission(userRolePermissionAddBo));

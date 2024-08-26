@@ -23,7 +23,7 @@ public class LoginUtils {
         Long loginUserId = getLoginUserId();
         String userPermission = userMapper.queryPermissions(loginUserId);//当前用户附加权限
         String userRolePermission = userMapper.queryRolePermission(loginUserId);//当前用户绑定角色所拥有的权限集合
-        return userPermission + userRolePermission;
+        return userPermission + "," + userRolePermission;
     }
 
 }

@@ -83,10 +83,10 @@ public class ApplyController {
      *      审批列表
      * @return
      */
-    @GetMapping("/queryApply/{type}/{page}/{limit}")
+    @GetMapping("/queryApply/{type}/{page}/{limit}/{communityId}")
     @ApiOperation("审批列表")
-    public String queryApply(@PathVariable String type,@PathVariable Long page,@PathVariable Long limit){
-        return JSONArray.toJSONString(applyService.queryApply(type,page,limit));
+    public String queryApply(@PathVariable String type,@PathVariable Long page,@PathVariable Long limit,@PathVariable Long communityId){
+        return JSONArray.toJSONString(applyService.queryApply(type,page,limit,communityId));
     }
 
 }

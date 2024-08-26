@@ -10,4 +10,8 @@ public interface CommunityService {
     ResponseVo updateCommunity(CommunityUpdateBo communityUpdateBo);
 
     ResponseVo deleteCommunity(Long id);
+
+    ResponseVo joinCommunity(Long communityId);
+
+    ResponseVo quitCommunity(Long communityId);
 }

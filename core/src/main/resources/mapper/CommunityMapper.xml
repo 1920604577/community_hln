@@ -57,4 +57,16 @@
         limit 1
     </update>
 
+    <update id="deleteCommunityUser">
+        update
+            community_user
+        set
+            del_flag = 1
+        where
+            community_id = #{communityId}
+        and
+            user_id = #{userId}
+        limit 1
+    </update>
+
 </mapper>
