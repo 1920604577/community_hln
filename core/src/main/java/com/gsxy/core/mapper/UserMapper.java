@@ -19,7 +19,7 @@ public interface UserMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     Long userReg(User user);
 
-    @Select("select * from user where username = #{username}")
+    @Select("select * from user where username = #{username} and del_flag = 0")
     User userLogin(UserLoginBo userLoginBo);
 
     UserVo queryUser(String number);
