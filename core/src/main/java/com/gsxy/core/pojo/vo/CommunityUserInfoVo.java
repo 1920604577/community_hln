@@ -30,5 +30,9 @@ public class CommunityUserInfoVo implements Serializable {
      * 用户phone
      */
     private String phone;
+    /**
+     * 用户phone
+     */
+    private String roleName;
 
 }

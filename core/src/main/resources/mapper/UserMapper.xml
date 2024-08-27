@@ -15,9 +15,9 @@
     <insert id="addUserInfo">
         insert into
             user_info
-            (id,name,age,birthday,college,grade,org,professional,phone)
+            (id,name,age,birthday,college,grade,org,professional,phone,card_code)
         values
-            (#{id},#{name},#{age},#{birthday},#{college},#{grade},#{org},#{professional},#{phone})
+            (#{id},#{name},#{age},#{birthday},#{college},#{grade},#{org},#{professional},#{phone},#{cardCode})
     </insert>
 
     <update id="updateUserInfo">
@@ -31,6 +31,7 @@
             <if test="grade != null">grade=#{grade},</if>
             <if test="org != null">org=#{org},</if>
             <if test="phone != null and phone != ''">phone=#{phone},</if>
+            <if test="cardCode != null and cardCode != ''">card_code=#{cardCode},</if>
             <if test="professional != null">professional=#{professional}</if>
         </set>
     </update>

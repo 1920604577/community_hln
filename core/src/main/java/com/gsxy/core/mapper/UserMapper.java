@@ -45,4 +45,7 @@ public interface UserMapper {
 
     @Select("select * from user_role_permission where user_id = #{loginUserId} limit 1")
     UserRolePermission queryUserRoleId(Long loginUserId);
+
+    @Select("select * from user_info where id = #{studentId} limit 1")
+    UserInfo queryInfoById(String studentId);
 }

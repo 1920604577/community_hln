@@ -13,7 +13,8 @@ import java.io.Serializable;
 @ToString
 public class UserAndTokenVo implements Serializable {
 
-    private User user;
+    private User user;//当前登录用户的所有信息
+    private boolean isHaveInfo;//是否完善了个人信息
     private String token;
 
 }

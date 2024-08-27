@@ -99,9 +99,12 @@ public class UserServiceImpl implements UserService {
 
         String token = JwtUtil.createJWT(user);
 
+        UserInfo userInfo = userMapper.queryInfoById(user.getStudentId());
+        user.setStudentId(user.getStudentId().substring(1));
         UserAndTokenVo userAndTokenVo = UserAndTokenVo.builder()
                 .token(token)
                 .user(user)
+                .isHaveInfo(userInfo == null ? false : true)
                 .build();
 
         return ResponseVo.builder()
@@ -358,6 +361,7 @@ public class UserServiceImpl implements UserService {
                 .org(userInfoBo.getOrg())
                 .name(userInfoBo.getName())
                 .age(userInfoBo.getAge())
+                .phone(userInfoBo.getPhone())
                 .birthday(userInfoBo.getBirthday())
                 .build();
 

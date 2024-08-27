@@ -332,7 +332,7 @@ public class CommunityServiceImpl implements CommunityService {
 
         return ResponseVo.builder()
                 .code("200")
-                .data(null)
+                .data(communityUserInfoVoList)
                 .message("查询成功")
                 .build();
     }

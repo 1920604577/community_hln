@@ -259,6 +259,15 @@ public class ApplyServiceImpl implements ApplyService {
                     userServiceImpl.addUserRolePermission(userRolePermissionAddBo);
                     userServiceImpl.deleteUserRolePermission(communityTemp.getCreatedBy());
                 }
+                //都成功之后如果指导教师被变更给新的指导教师绑定一个身份
+                if (!ObjectUtils.isEmpty(community.getTeacherId()) && community.getTeacherId() != 0L) {
+                    UserRolePermissionAddBo userRolePermissionAddBo = UserRolePermissionAddBo.builder()
+                            .userId(community.getTeacherId())
+                            .roleId(4L)
+                            .build();
+                    userServiceImpl.addUserRolePermission(userRolePermissionAddBo);
+                    userServiceImpl.deleteUserRolePermission(communityTemp.getTeacherId());
+                }
             } else {
                 return ResponseVo.builder()
                         .message("您无权限操作查看该类型的数据")
@@ -289,11 +298,18 @@ public class ApplyServiceImpl implements ApplyService {
                         .build();
 
                 communityUserMapper.add(communityUser);
+                userServiceImpl.addUserRolePermission(
+                        UserRolePermissionAddBo.builder()
+                                .userId(apply.getCreatedBy())
+                                .roleId(5L)
+                                .build()
+                );
             } else if (type.equals("QUIT_COMMUNITY")) {
                 applyEnum = ApplyEnum.QUIT_COMMUNITY;
                 applyMapper.updateApply(id, ApplyEnum.PASS);
                 Apply apply = applyMapper.queryApplyById(id);
                 communityMapper.deleteCommunityUser(communityId,apply.getCreatedBy());
+                userServiceImpl.deleteUserRolePermission(apply.getCreatedBy());
             }
 
             return ResponseVo.builder()
