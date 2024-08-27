@@ -27,6 +27,10 @@ public class RoleVo implements Serializable {
      */
     private Long createdBy;
     /**
+     * 创建人name
+     */
+    private String createdByText;
+    /**
      * 创建时间
      */
     private Date createdTime;

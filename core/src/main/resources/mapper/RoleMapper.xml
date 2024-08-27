@@ -48,4 +48,13 @@
         limit #{page},#{limit}
     </select>
 
+    <select id="queryPageRoleCount" resultType="java.lang.Long">
+        select
+            count(id)
+        from
+            role
+        where
+            del_flag = 0
+    </select>
+
 </mapper>

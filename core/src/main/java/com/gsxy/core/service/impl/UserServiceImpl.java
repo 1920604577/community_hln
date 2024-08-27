@@ -16,6 +16,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.gsxy.core.pojo.enums.CodeValues.SUCCESS_CODE;
 import static com.gsxy.core.pojo.enums.MessageValues.SUCCESS_MESSAGE;
@@ -235,7 +236,11 @@ public class UserServiceImpl implements UserService {
     public ResponseVo queryPagePermission(Long page, Long limit) {
 
         page = (page - 1) * limit;
-        List<PermissionVo> permissionVoList = permissionMapper.queryPagePermission(page,limit);
+        List<PermissionVo> permissionVoList = permissionMapper.queryPagePermission(page,limit)
+                .stream().map(vo -> {
+                    vo.setCreatedByText(userMapper.queryInfoById(userMapper.queryUserById(vo.getCreatedBy()).getStudentId()).getName());
+                    return vo;
+                }).collect(Collectors.toList());
         Long count = permissionMapper.queryPagePermissionCount(page,limit);
 
         return ResponseVo.builder()
@@ -268,12 +273,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseVo queryPageRole(Long page, Long limit) {
+
         page = (page - 1) * limit;
-        List<RoleVo> roleVo = roleMapper.queryPageRole(page,limit);
+        List<RoleVo> roleVo = roleMapper.queryPageRole(page,limit)
+                .stream().map(vo -> {
+                    vo.setCreatedByText(userMapper.queryInfoById(userMapper.queryUserById(vo.getCreatedBy()).getStudentId()).getName());
+                    return vo;
+                }).collect(Collectors.toList());
+        Long count = roleMapper.queryPageRoleCount(page,limit);
 
         return ResponseVo.builder()
                 .code(SUCCESS_CODE)
                 .data(roleVo)
+                .count(count)
                 .message(SUCCESS_MESSAGE)
                 .build();
     }
@@ -390,6 +402,27 @@ public class UserServiceImpl implements UserService {
                 .message(SUCCESS_MESSAGE)
                 .code(SUCCESS_CODE)
                 .data(null)
+                .build();
+    }
+
+    @Override
+    public ResponseVo queryPageUser(Long page, Long limit) {
+
+        page = (page - 1) * limit;
+        List<UserVo> userVoList = userMapper.queryPageUser(page,limit)
+                .stream().map(vo -> {
+                    if(userMapper.queryUserById(vo.getCreatedBy()) != null)
+                        vo.setCreatedByText(userMapper.queryInfoById(userMapper.queryUserById(vo.getCreatedBy()).getStudentId()).getName());
+                    vo.setUpdateByText(vo.getUpdateBy() == null ? null : userMapper.queryInfoById(userMapper.queryUserById(vo.getUpdateBy()).getStudentId()).getName());
+                    return vo;
+                }).collect(Collectors.toList());
+        Long count = userMapper.queryPageUserCount(page,limit);
+
+        return ResponseVo.builder()
+                .message(SUCCESS_MESSAGE)
+                .code(SUCCESS_CODE)
+                .data(userVoList)
+                .count(count)
                 .build();
     }
 }

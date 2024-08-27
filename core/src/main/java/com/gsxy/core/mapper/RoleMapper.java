@@ -20,4 +20,5 @@ public interface RoleMapper {
 
     Long updateRole(Role role);
 
+    Long queryPageRoleCount(Long page, Long limit);
 }

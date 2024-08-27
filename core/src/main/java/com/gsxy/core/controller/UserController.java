@@ -196,6 +196,17 @@ public class UserController {
 
     /**
      * @author hln 2024-8-25
+     *      分页查询用户列表
+     * @return
+     */
+    @GetMapping("/queryPageUser/{page}/{limit}")
+    @ApiOperation("分页查询用户列表")
+    public String queryPageUser(@PathVariable Long page,@PathVariable Long limit){
+        return JSONArray.toJSONString(userService.queryPageUser(page,limit));
+    }
+
+    /**
+     * @author hln 2024-8-25
      *      删除角色
      * @param id
      * @return

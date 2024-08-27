@@ -31,4 +31,6 @@ public interface UserService {
     ResponseVo queryUser(String number);
 
     ResponseVo userInfo(UserInfoBo userInfoBo);
+
+    ResponseVo queryPageUser(Long page, Long limit);
 }

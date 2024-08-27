@@ -10,6 +10,9 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
 
@@ -48,4 +51,8 @@ public interface UserMapper {
 
     @Select("select * from user_info where id = #{studentId} limit 1")
     UserInfo queryInfoById(String studentId);
+
+    List<UserVo> queryPageUser(Long page, Long limit);
+
+    Long queryPageUserCount(Long page, Long limit);
 }
