@@ -16,4 +16,6 @@ public interface CommunityService {
     ResponseVo quitCommunity(Long communityId);
 
     ResponseVo queryUserByCommunity(Long communityId);
+
+    ResponseVo queryCommunityAll(Long page, Long limit, String name);
 }

@@ -17,4 +17,6 @@ public interface UserRolePermissionMapper {
     Long updateUserRolePermission(UserRolePermission userRolePermission);
 
     Long deleteUserRolePermission(Long id);
+
+    void deleteUserRolePermissionByCUId(Long createdBy, Long communityId);
 }

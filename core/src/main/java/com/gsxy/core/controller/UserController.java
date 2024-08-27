@@ -9,6 +9,9 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import static com.gsxy.core.pojo.enums.CodeValues.PARAMETER_ERROR;
+import static com.gsxy.core.pojo.enums.MessageValues.PARAMETER_MESSAGE;
+
 @CrossOrigin
 @Api(value = "用户板块接口",tags = {"用户板块接口"})
 @RestController
@@ -43,8 +46,8 @@ public class UserController {
         if(userLoginBo == null){
             JSONArray.toJSONString(
                     ResponseVo.builder()
-                            .code("0x455")
-                            .message("参数为null")
+                            .code(PARAMETER_ERROR)
+                            .message(PARAMETER_MESSAGE)
                             .data(null)
                             .build()
             );
@@ -90,8 +93,8 @@ public class UserController {
         if(permissionAddBo == null){
             JSONArray.toJSONString(
                     ResponseVo.builder()
-                            .code("0x455")
-                            .message("参数为null")
+                            .code(PARAMETER_ERROR)
+                            .message(PARAMETER_MESSAGE)
                             .data(null)
                             .build()
             );
@@ -113,8 +116,8 @@ public class UserController {
         if(id == null && id != 0L){
             JSONArray.toJSONString(
                     ResponseVo.builder()
-                            .code("0x455")
-                            .message("参数为null")
+                            .code(PARAMETER_ERROR)
+                            .message(PARAMETER_MESSAGE)
                             .data(null)
                             .build()
             );
@@ -147,8 +150,8 @@ public class UserController {
         if(roleAddBo == null){
             JSONArray.toJSONString(
                     ResponseVo.builder()
-                            .code("0x455")
-                            .message("参数为null")
+                            .code(PARAMETER_ERROR)
+                            .message(PARAMETER_MESSAGE)
                             .data(null)
                             .build()
             );
@@ -170,8 +173,8 @@ public class UserController {
         if(roleUpdateBo == null){
             JSONArray.toJSONString(
                     ResponseVo.builder()
-                            .code("0x455")
-                            .message("参数为null")
+                            .code(PARAMETER_ERROR)
+                            .message(PARAMETER_MESSAGE)
                             .data(null)
                             .build()
             );
@@ -204,8 +207,8 @@ public class UserController {
         if(id == null && id != 0L){
             JSONArray.toJSONString(
                     ResponseVo.builder()
-                            .code("0x455")
-                            .message("参数为null")
+                            .code(PARAMETER_ERROR)
+                            .message(PARAMETER_MESSAGE)
                             .data(null)
                             .build()
             );
@@ -227,8 +230,8 @@ public class UserController {
         if(userRolePermissionAddBo == null){
             JSONArray.toJSONString(
                     ResponseVo.builder()
-                            .code("0x455")
-                            .message("参数为null")
+                            .code(PARAMETER_ERROR)
+                            .message(PARAMETER_MESSAGE)
                             .data(null)
                             .build()
             );

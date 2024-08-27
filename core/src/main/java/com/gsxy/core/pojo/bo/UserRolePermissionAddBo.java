@@ -17,6 +17,8 @@ public class UserRolePermissionAddBo implements Serializable {
     private Long userId;
     @ApiModelProperty(value = "角色id", example = "角色id")
     private Long roleId;
+    @ApiModelProperty(value = "社团id", example = "社团id")
+    private Long communityId;
     @ApiModelProperty(value = "权限id集合", example = "权限id集合")
     private String permission;
 

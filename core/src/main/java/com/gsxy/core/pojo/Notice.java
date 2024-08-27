@@ -1,15 +1,16 @@
 package com.gsxy.core.pojo;
 
+import com.gsxy.core.pojo.enums.NoticeTypeEnum;
 import lombok.*;
 
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 用户角色权限表(UserRolePermission)实体类
+ * 通知表(Notice)实体类
  *
  * @author makejava
- * @since 2024-08-25 10:12:47
+ * @since 2024-08-27 14:40:45
  */
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,28 +18,36 @@ import java.util.Date;
 @Getter
 @Setter
 @ToString
-public class UserRolePermission implements Serializable {
-    private static final long serialVersionUID = -66839404076269740L;
+public class Notice implements Serializable {
+    private static final long serialVersionUID = 228639351053966692L;
 
     private Long id;
 /**
-     * 用户id
+     * 标题
      */
-    private Long userId;
+    private String title;
 /**
-     * 绑定的角色id
+     * 内容
      */
-    private Long roleId;
+    private String message;
+/**
+     * 枚举类型（预留）
+     */
+    private NoticeTypeEnum type;
+/**
+     * 发起人id
+     */
+    private Long sendUserId;
     /**
      * 社团id
      */
     private Long communityId;
 /**
-     * 附加的权限id（注意此处是拼接成了一个字符串）
+     * 接收人id
      */
-    private String permission;
+    private Long receiveUserId;
 /**
-     * 创建人
+     * 创建者
      */
     private Long createdBy;
 /**
@@ -46,7 +55,7 @@ public class UserRolePermission implements Serializable {
      */
     private Date createdTime;
 /**
-     * 修改人
+     * 修改者
      */
     private Long updatedBy;
 /**
@@ -57,7 +66,6 @@ public class UserRolePermission implements Serializable {
      * 逻辑删除（0：存在，1删除）
      */
     private Integer delFlag;
-
 
 }
 

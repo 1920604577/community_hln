@@ -5,14 +5,15 @@ import com.gsxy.core.mapper.ApplyMapper;
 import com.gsxy.core.mapper.CommunityMapper;
 import com.gsxy.core.mapper.CommunityUserMapper;
 import com.gsxy.core.mapper.UserMapper;
-import com.gsxy.core.pojo.Apply;
-import com.gsxy.core.pojo.Community;
-import com.gsxy.core.pojo.CommunityUser;
-import com.gsxy.core.pojo.UserRolePermission;
+import com.gsxy.core.pojo.*;
 import com.gsxy.core.pojo.bo.CommunityAddBo;
 import com.gsxy.core.pojo.bo.CommunityUpdateBo;
+import com.gsxy.core.pojo.bo.NoticeAddBo;
+import com.gsxy.core.pojo.enums.CommunityStatusEnum;
 import com.gsxy.core.pojo.enums.CommunityTypeEnum;
+import com.gsxy.core.pojo.enums.NoticeTypeEnum;
 import com.gsxy.core.pojo.vo.CommunityUserInfoVo;
+import com.gsxy.core.pojo.vo.CommunityVo;
 import com.gsxy.core.pojo.vo.ResponseVo;
 import com.gsxy.core.service.CommunityService;
 import com.gsxy.core.util.LoginUtils;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CommunityServiceImpl implements CommunityService {
@@ -38,6 +40,8 @@ public class CommunityServiceImpl implements CommunityService {
     private UserMapper userMapper;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private NoticeServiceImpl noticeServiceImpl;
 
     @Override
     @Transactional
@@ -90,6 +94,16 @@ public class CommunityServiceImpl implements CommunityService {
                     .message("初始化社团数据失败")
                     .build();
         }
+
+        //发起通知给管理员
+        noticeServiceImpl.addNotice(
+                NoticeAddBo.builder()
+                        .message("您接收到一个新的社团申请，请及时处理")
+                        .title("创建社团申请")
+                        .type(NoticeTypeEnum.ADMIN)
+                        .receiveUserId(1L)
+                        .build()
+        );
 
         return ResponseVo.builder()
                 .code("200")
@@ -166,6 +180,17 @@ public class CommunityServiceImpl implements CommunityService {
         hashOps.put(key, "type", communityUpdateBo.getType());
         hashOps.put(key, "createdBy", communityUpdateBo.getCreatedBy());
 
+        //发起通知给管理员
+        noticeServiceImpl.addNotice(
+                NoticeAddBo.builder()
+                        .message("您接收到一个新的修改社团申请，请及时处理")
+                        .title("修改社团申请")
+                        .type(NoticeTypeEnum.ADMIN)
+                        .receiveUserId(1L)
+                        .communityId(communityUpdateBo.getId())
+                        .build()
+        );
+
         return ResponseVo.builder()
                 .code("200")
                 .data(null)
@@ -180,8 +205,9 @@ public class CommunityServiceImpl implements CommunityService {
         //验证当前操作用户是否是社长
         Long loginUserId = LoginUtils.getLoginUserId();
         String permissions = LoginUtils.getUserPermission(userMapper);
+        UserRolePermission userRolePermission = userMapper.queryUserRoleId(loginUserId);
 
-        if(permissions.contains("1")){
+        if(userRolePermission.getRoleId() == 1L){
 
             communityMapper.delete(id);
 
@@ -192,7 +218,7 @@ public class CommunityServiceImpl implements CommunityService {
                     .build();
         }
 
-        if(!permissions.contains("3")){
+        if(userRolePermission.getRoleId() != 3L){
             return ResponseVo.builder()
                     .code("412")
                     .data(null)
@@ -217,6 +243,17 @@ public class CommunityServiceImpl implements CommunityService {
                     .message("注销社团申请提交失败")
                     .build();
         }
+
+        //发起通知给管理员
+        noticeServiceImpl.addNotice(
+                NoticeAddBo.builder()
+                        .message("您接收到一个新的注销社团申请，请及时处理")
+                        .title("注销社团申请")
+                        .type(NoticeTypeEnum.ADMIN)
+                        .receiveUserId(1L)
+                        .communityId(id)
+                        .build()
+        );
 
         return ResponseVo.builder()
                 .code("200")
@@ -258,6 +295,17 @@ public class CommunityServiceImpl implements CommunityService {
                     .build();
         }
 
+        //发起通知给该社团的社长
+        noticeServiceImpl.addNotice(
+                NoticeAddBo.builder()
+                        .message("您接收到一个新的加入社团申请，请及时处理")
+                        .title("加入社团申请")
+                        .type(NoticeTypeEnum.COMMUNITY)
+                        .communityId(communityId)
+                        .receiveUserId(communityMapper.queryCommunityById(communityId).getCreatedBy())
+                        .build()
+        );
+
         return ResponseVo.builder()
                 .code("200")
                 .data(null)
@@ -298,6 +346,17 @@ public class CommunityServiceImpl implements CommunityService {
                     .build();
         }
 
+        //发起通知给该社团的社长
+        noticeServiceImpl.addNotice(
+                NoticeAddBo.builder()
+                        .message("您接收到一个新的退社申请，请及时处理")
+                        .title("退社申请")
+                        .communityId(communityId)
+                        .type(NoticeTypeEnum.COMMUNITY)
+                        .receiveUserId(communityMapper.queryCommunityById(communityId).getCreatedBy())
+                        .build()
+        );
+
         return ResponseVo.builder()
                 .code("200")
                 .data(null)
@@ -334,6 +393,28 @@ public class CommunityServiceImpl implements CommunityService {
                 .code("200")
                 .data(communityUserInfoVoList)
                 .message("查询成功")
+                .build();
+    }
+
+    @Override
+    public ResponseVo queryCommunityAll(Long page, Long limit, String name) {
+
+        page = (page - 1) * limit;
+        List<CommunityVo> communityVoLists = communityMapper.queryCommunityLike(page, limit, name, CommunityStatusEnum.ENABLE)
+                .stream().map(community -> {
+                    community.setTeacherName(userMapper.queryUser(userMapper.queryUserById(community.getTeacherId()).getStudentId()).getName());
+                    UserInfo userInfo = userMapper.queryInfoById(userMapper.queryUserById(community.getCreatedBy()).getStudentId());
+                    community.setCreatedByName(userInfo.getName());
+                    community.setPhone(userInfo.getPhone());
+                    return community;
+                }).collect(Collectors.toList());
+        Long count = communityMapper.queryCommunityCount(CommunityStatusEnum.ENABLE,name);
+
+        return ResponseVo.builder()
+                .code("200")
+                .data(communityVoLists)
+                .message("查询成功")
+                .count(count)
                 .build();
     }
 }

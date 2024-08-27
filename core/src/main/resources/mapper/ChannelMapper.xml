@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gsxy.core.mapper.ChannelMapper">
+
+    <insert id="add">
+        insert into
+            channel
+            (community_id,created_by,created_time,name)
+        values
+            (#{communityId},#{createdBy},#{createdTime},#{name})
+    </insert>
+
+    <update id="update">
+        update
+        channel
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="updatedBy != null">
+                updated_by = #{updatedBy},
+            </if>
+            <if test="updatedTime != null">
+                updated_time = #{updatedTime}
+            </if>
+        </set>
+        where
+            id = #{id}
+        limit 1
+    </update>
+
+    <update id="delete">
+        update
+        channel
+        set
+            del_flag = 1
+        where
+            id = #{id}
+        limit 1
+    </update>
+
+    <select id="queryChannelLike" resultType="com.gsxy.core.pojo.vo.ChannelVo">
+        select
+            id,name,created_by,created_time,updated_by,updated_time
+        from
+            channel
+        where
+            del_flag = 0
+            <if test="name != null and name != '' and name != '-1'">
+                and name like concat('%',#{name},'%')
+            </if>
+                and community_id = #{communityId}
+            limit #{page},#{limit}
+    </select>
+
+    <select id="queryCommunityCount" resultType="java.lang.Long">
+        select
+            count(id)
+        from
+        channel
+        where
+        del_flag = 0
+        <if test="name != null and name != '' and name != '-1'">
+            and name like concat('%',#{name},'%')
+        </if>
+        and community_id = #{communityId}
+    </select>
+
+</mapper>

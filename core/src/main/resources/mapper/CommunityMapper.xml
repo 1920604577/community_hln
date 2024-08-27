@@ -28,6 +28,7 @@
             del_flag = 1
         where
             id = #{id}
+        limit 1
     </update>
 
     <update id="updateCommunityInfo">
@@ -68,5 +69,39 @@
             user_id = #{userId}
         limit 1
     </update>
+
+    <select id="queryCommunityLike" resultType="com.gsxy.core.pojo.vo.CommunityVo">
+        select
+            c.id,c.name,c.teacher_id,
+            c.type,c.discription,c.created_by
+        from
+            community c
+        <where>
+                c.status = #{communityStatusEnum}
+            and
+                c.del_flag = 0
+            <if test="name != null and name != '' and name != '-1'">
+                and
+                c.name like concat('%',#{name},'%')
+            </if>
+        </where>
+        limit #{page},#{limit}
+    </select>
+
+    <select id="queryCommunityCount" resultType="java.lang.Long">
+        select
+            count(id)
+        from
+        community c
+        <where>
+            c.status = #{communityStatusEnum}
+            and
+            c.del_flag = 0
+            <if test="name != null and name != '' and name != '-1'">
+                and
+                c.name like concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
 
 </mapper>

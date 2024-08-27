@@ -17,6 +17,9 @@ import org.springframework.util.ObjectUtils;
 import java.util.Date;
 import java.util.List;
 
+import static com.gsxy.core.pojo.enums.CodeValues.SUCCESS_CODE;
+import static com.gsxy.core.pojo.enums.MessageValues.SUCCESS_MESSAGE;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -76,9 +79,9 @@ public class UserServiceImpl implements UserService {
         }
 
         return ResponseVo.builder()
-                .code("200")
+                .code(SUCCESS_CODE)
                 .data(null)
-                .message("注册成功")
+                .message(SUCCESS_MESSAGE)
                 .build();
     }
 
@@ -108,9 +111,9 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         return ResponseVo.builder()
-                .code("200")
+                .code(SUCCESS_CODE)
                 .data(userAndTokenVo)
-                .message("登录成功")
+                .message(SUCCESS_MESSAGE)
                 .build();
     }
 
@@ -135,9 +138,9 @@ public class UserServiceImpl implements UserService {
         }
 
         return ResponseVo.builder()
-                .code("200")
+                .code(SUCCESS_CODE)
                 .data(null)
-                .message("权限添加成功")
+                .message(SUCCESS_MESSAGE)
                 .build();
     }
 
@@ -163,9 +166,9 @@ public class UserServiceImpl implements UserService {
         }
 
         return ResponseVo.builder()
-                .code("200")
+                .code(SUCCESS_CODE)
                 .data(null)
-                .message("角色添加成功")
+                .message(SUCCESS_MESSAGE)
                 .build();
     }
 
@@ -176,6 +179,7 @@ public class UserServiceImpl implements UserService {
         UserRolePermission userRolePermission = UserRolePermission.builder()
                 .createdBy(loginUserId)
                 .createdTime(new Date())
+                .communityId(userRolePermissionAddBo.getCommunityId())
                 .roleId(userRolePermissionAddBo.getRoleId())
                 .userId(userRolePermissionAddBo.getUserId())
                 .permission(userRolePermissionAddBo.getPermission())
@@ -201,9 +205,9 @@ public class UserServiceImpl implements UserService {
         }
 
         return ResponseVo.builder()
-                .code("200")
+                .code(SUCCESS_CODE)
                 .data(null)
-                .message("角色或附加权限绑定成功")
+                .message(SUCCESS_MESSAGE)
                 .build();
     }
 
@@ -221,9 +225,9 @@ public class UserServiceImpl implements UserService {
         }
 
         return ResponseVo.builder()
-                .code("200")
+                .code(SUCCESS_CODE)
                 .data(null)
-                .message("权限删除成功")
+                .message(SUCCESS_MESSAGE)
                 .build();
     }
 
@@ -235,10 +239,10 @@ public class UserServiceImpl implements UserService {
         Long count = permissionMapper.queryPagePermissionCount(page,limit);
 
         return ResponseVo.builder()
-                .code("200")
+                .code(SUCCESS_CODE)
                 .count(count)
                 .data(permissionVoList)
-                .message("权限查询成功")
+                .message(SUCCESS_MESSAGE)
                 .build();
     }
 
@@ -256,9 +260,9 @@ public class UserServiceImpl implements UserService {
         }
 
         return ResponseVo.builder()
-                .code("200")
+                .code(SUCCESS_CODE)
                 .data(null)
-                .message("角色删除成功")
+                .message(SUCCESS_MESSAGE)
                 .build();
     }
 
@@ -268,9 +272,9 @@ public class UserServiceImpl implements UserService {
         List<RoleVo> roleVo = roleMapper.queryPageRole(page,limit);
 
         return ResponseVo.builder()
-                .code("200")
+                .code(SUCCESS_CODE)
                 .data(roleVo)
-                .message("权限查询成功")
+                .message(SUCCESS_MESSAGE)
                 .build();
     }
 
@@ -296,9 +300,9 @@ public class UserServiceImpl implements UserService {
         }
 
         return ResponseVo.builder()
-                .code("200")
+                .code(SUCCESS_CODE)
                 .data(null)
-                .message("角色修改成功")
+                .message(SUCCESS_MESSAGE)
                 .build();
     }
 
@@ -308,8 +312,8 @@ public class UserServiceImpl implements UserService {
         Long aLong = userRolePermissionMapper.deleteUserRolePermission(id);
 
         return ResponseVo.builder()
-                .message(aLong == 0L ? "删除失败" : "删除成功")
-                .code(aLong == 0L ? "500" : "200")
+                .message(aLong == 0L ? "删除失败" : SUCCESS_MESSAGE)
+                .code(aLong == 0L ? "500" : SUCCESS_CODE)
                 .data(null)
                 .build();
     }
@@ -332,8 +336,8 @@ public class UserServiceImpl implements UserService {
                     .build();
 
         return ResponseVo.builder()
-                .message("查询成功")
-                .code("200")
+                .message(SUCCESS_MESSAGE)
+                .code(SUCCESS_CODE)
                 .data(userVo)
                 .build();
     }
@@ -383,8 +387,8 @@ public class UserServiceImpl implements UserService {
         }
 
         return ResponseVo.builder()
-                .message("添加成功")
-                .code("200")
+                .message(SUCCESS_MESSAGE)
+                .code(SUCCESS_CODE)
                 .data(null)
                 .build();
     }

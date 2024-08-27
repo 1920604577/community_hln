@@ -4,10 +4,12 @@ import com.gsxy.core.mapper.*;
 import com.gsxy.core.pojo.*;
 import com.gsxy.core.pojo.bo.ApplyFlowAddBo;
 import com.gsxy.core.pojo.bo.ApplyFlowBo;
+import com.gsxy.core.pojo.bo.NoticeAddBo;
 import com.gsxy.core.pojo.bo.UserRolePermissionAddBo;
 import com.gsxy.core.pojo.enums.ApplyEnum;
 import com.gsxy.core.pojo.enums.CommunityStatusEnum;
 import com.gsxy.core.pojo.enums.CommunityTypeEnum;
+import com.gsxy.core.pojo.enums.NoticeTypeEnum;
 import com.gsxy.core.pojo.vo.ApplyFlowVo;
 import com.gsxy.core.pojo.vo.ApplyVo;
 import com.gsxy.core.pojo.vo.ResponseVo;
@@ -41,9 +43,13 @@ public class ApplyServiceImpl implements ApplyService {
     @Autowired
     private UserServiceImpl userServiceImpl;
     @Autowired
+    private UserRolePermissionMapper userRolePermissionMapper;
+    @Autowired
     private RedisTemplate redisTemplate;
     @Autowired
     private CommunityUserMapper communityUserMapper;
+    @Autowired
+    private NoticeServiceImpl noticeServiceImpl;
 
     @Override
     public ResponseVo addApplyFlow(ApplyFlowAddBo applyFlowAddBo) {
@@ -204,12 +210,14 @@ public class ApplyServiceImpl implements ApplyService {
                 Community community = communityMapper.queryCommunityById(id);
                 UserRolePermissionAddBo userRolePermissionAddBo = UserRolePermissionAddBo.builder()
                         .userId(community.getCreatedBy())
+                        .communityId(community.getId())
                         .roleId(3L)
                         .build();
                 userServiceImpl.addUserRolePermission(userRolePermissionAddBo);
                 //为指导教师绑定角色权限
                 UserRolePermissionAddBo userRolePermissionTeacher = UserRolePermissionAddBo.builder()
                         .userId(community.getTeacherId())
+                        .communityId(community.getId())
                         .roleId(4L)
                         .build();
                 userServiceImpl.addUserRolePermission(userRolePermissionTeacher);
@@ -220,6 +228,18 @@ public class ApplyServiceImpl implements ApplyService {
                         .createdBy(community.getCreatedBy())
                         .build();
                 communityUserMapper.add(communityUser);
+
+                //以上流程都没有问题后发送通知
+                noticeServiceImpl.addNotice(
+                        NoticeAddBo.builder()
+                                .message("创建社团申请已批准")
+                                .title("创建社团申请回应")
+                                .type(NoticeTypeEnum.ADMIN)
+                                .communityId(community.getId())
+                                .receiveUserId(community.getCreatedBy())
+                                .build()
+                );
+
             } else if (type.equals("CHANGE_COMMUNITY")) {//修改社团信息
                 applyEnum = ApplyEnum.CHANGE_COMMUNITY;
                 applyMapper.updateApply(id, ApplyEnum.PASS);
@@ -246,14 +266,18 @@ public class ApplyServiceImpl implements ApplyService {
                         .createdBy((Long) entries.get("createdBy") == null ? null : (Long) entries.get("createdBy"))
                         .build();
 
-                communityMapper.updateCommunityInfo(community);
-                //以上流程都结束后开始清理redis
-                redisTemplate.delete(key);
+                Long isSuccess = communityMapper.updateCommunityInfo(community);
+
+                if(!ObjectUtils.isEmpty(isSuccess) && isSuccess != 0L){
+                    //以上流程都结束后开始清理redis
+                    redisTemplate.delete(key);
+                }
 
                 //都成功之后如果社长被变更给新的社团创建者绑定一个身份
                 if (!ObjectUtils.isEmpty(community.getCreatedBy()) && community.getCreatedBy() != 0L) {
                     UserRolePermissionAddBo userRolePermissionAddBo = UserRolePermissionAddBo.builder()
                             .userId(community.getCreatedBy())
+                            .communityId(community.getId())
                             .roleId(3L)
                             .build();
                     userServiceImpl.addUserRolePermission(userRolePermissionAddBo);
@@ -264,10 +288,38 @@ public class ApplyServiceImpl implements ApplyService {
                     UserRolePermissionAddBo userRolePermissionAddBo = UserRolePermissionAddBo.builder()
                             .userId(community.getTeacherId())
                             .roleId(4L)
+                            .communityId(community.getId())
                             .build();
                     userServiceImpl.addUserRolePermission(userRolePermissionAddBo);
                     userServiceImpl.deleteUserRolePermission(communityTemp.getTeacherId());
                 }
+
+                //以上流程都没有问题后发送通知
+                noticeServiceImpl.addNotice(
+                        NoticeAddBo.builder()
+                                .message("修改社团申请已批准")
+                                .title("修改社团申请回应")
+                                .type(NoticeTypeEnum.ADMIN)
+                                .communityId(community.getId())
+                                .receiveUserId(community.getCreatedBy())
+                                .build()
+                );
+            } else if (type.equals("DESTROY_COMMUNITY")) {//注销社团
+                applyEnum = ApplyEnum.DESTROY_COMMUNITY;
+                applyMapper.updateApply(id, ApplyEnum.PASS);
+                //删除社团数据
+                communityMapper.delete(communityId);
+
+                //以上流程都没有问题后发送通知
+                noticeServiceImpl.addNotice(
+                        NoticeAddBo.builder()
+                                .message("注销社团申请已批准")
+                                .title("注销社团申请回应")
+                                .communityId(communityId)
+                                .type(NoticeTypeEnum.ADMIN)
+                                .receiveUserId(communityMapper.queryCommunityById(communityId).getCreatedBy())
+                                .build()
+                );
             } else {
                 return ResponseVo.builder()
                         .message("您无权限操作查看该类型的数据")
@@ -302,14 +354,37 @@ public class ApplyServiceImpl implements ApplyService {
                         UserRolePermissionAddBo.builder()
                                 .userId(apply.getCreatedBy())
                                 .roleId(5L)
+                                .communityId(communityId)
                                 .build()
                 );
-            } else if (type.equals("QUIT_COMMUNITY")) {
+
+                //以上流程都没有问题后发送通知
+                noticeServiceImpl.addNotice(
+                        NoticeAddBo.builder()
+                                .message("加入社团申请已批准")
+                                .title("加入社团申请回应")
+                                .communityId(communityId)
+                                .type(NoticeTypeEnum.COMMUNITY)
+                                .receiveUserId(communityMapper.queryCommunityById(communityId).getCreatedBy())
+                                .build()
+                );
+            } else if (type.equals("QUIT_COMMUNITY")) {//退出社团
                 applyEnum = ApplyEnum.QUIT_COMMUNITY;
                 applyMapper.updateApply(id, ApplyEnum.PASS);
                 Apply apply = applyMapper.queryApplyById(id);
                 communityMapper.deleteCommunityUser(communityId,apply.getCreatedBy());
-                userServiceImpl.deleteUserRolePermission(apply.getCreatedBy());
+                userRolePermissionMapper.deleteUserRolePermissionByCUId(apply.getCreatedBy(), communityId);
+
+                //以上流程都没有问题后发送通知
+                noticeServiceImpl.addNotice(
+                        NoticeAddBo.builder()
+                                .message("退出社团申请已批准")
+                                .title("退出社团申请回应")
+                                .communityId(communityId)
+                                .type(NoticeTypeEnum.COMMUNITY)
+                                .receiveUserId(communityMapper.queryCommunityById(communityId).getCreatedBy())
+                                .build()
+                );
             }
 
             return ResponseVo.builder()

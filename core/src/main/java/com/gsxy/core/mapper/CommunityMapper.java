@@ -2,9 +2,12 @@ package com.gsxy.core.mapper;
 
 import com.gsxy.core.pojo.Community;
 import com.gsxy.core.pojo.enums.CommunityStatusEnum;
+import com.gsxy.core.pojo.vo.CommunityVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 @Mapper
 public interface CommunityMapper {
@@ -19,10 +22,14 @@ public interface CommunityMapper {
 
     void delete(Long id);
 
-    void updateCommunityInfo(Community community);
+    Long updateCommunityInfo(Community community);
 
     @Select("select * from community where id = #{communityId} limit 1")
     Community queryCommunityByCommunityId(Long communityId);
 
     void deleteCommunityUser(Long communityId, Long userId);
+
+    List<CommunityVo> queryCommunityLike(Long page, Long limit, String name, CommunityStatusEnum communityStatusEnum);
+
+    Long queryCommunityCount(CommunityStatusEnum communityStatusEnum, String name);
 }

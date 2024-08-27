@@ -6,10 +6,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 用户角色权限表(UserRolePermission)实体类
+ * 通道表 （该表用以区分各个学期以及指定周期的通知内容以及活动内容）
+(Channel)实体类
  *
  * @author makejava
- * @since 2024-08-25 10:12:47
+ * @since 2024-08-27 14:40:26
  */
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,26 +18,18 @@ import java.util.Date;
 @Getter
 @Setter
 @ToString
-public class UserRolePermission implements Serializable {
-    private static final long serialVersionUID = -66839404076269740L;
+public class Channel implements Serializable {
+    private static final long serialVersionUID = 594003275959615112L;
 
     private Long id;
 /**
-     * 用户id
+     * 通道名称
      */
-    private Long userId;
+    private String name;
 /**
-     * 绑定的角色id
-     */
-    private Long roleId;
-    /**
      * 社团id
      */
     private Long communityId;
-/**
-     * 附加的权限id（注意此处是拼接成了一个字符串）
-     */
-    private String permission;
 /**
      * 创建人
      */
@@ -57,7 +50,6 @@ public class UserRolePermission implements Serializable {
      * 逻辑删除（0：存在，1删除）
      */
     private Integer delFlag;
-
 
 }
 

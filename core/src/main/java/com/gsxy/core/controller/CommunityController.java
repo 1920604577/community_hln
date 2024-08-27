@@ -2,6 +2,7 @@ package com.gsxy.core.controller;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.gsxy.core.pojo.bo.*;
+import com.gsxy.core.pojo.enums.CodeValues;
 import com.gsxy.core.pojo.vo.ResponseVo;
 import com.gsxy.core.service.ApplyService;
 import com.gsxy.core.service.CommunityService;
@@ -9,6 +10,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import static com.gsxy.core.pojo.enums.CodeValues.PARAMETER_ERROR;
+import static com.gsxy.core.pojo.enums.MessageValues.PARAMETER_MESSAGE;
 
 @CrossOrigin
 @Api(value = "社团板块接口",tags = {"社团板块接口"})
@@ -32,8 +36,8 @@ public class CommunityController {
         if(communityAddBo == null){
             JSONArray.toJSONString(
                     ResponseVo.builder()
-                            .code("0x455")
-                            .message("参数为null")
+                            .code(PARAMETER_ERROR)
+                            .message(PARAMETER_MESSAGE)
                             .data(null)
                             .build()
             );
@@ -55,8 +59,8 @@ public class CommunityController {
         if(communityUpdateBo == null){
             JSONArray.toJSONString(
                     ResponseVo.builder()
-                            .code("0x455")
-                            .message("参数为null")
+                            .code(PARAMETER_ERROR)
+                            .message(PARAMETER_MESSAGE)
                             .data(null)
                             .build()
             );
@@ -78,8 +82,8 @@ public class CommunityController {
         if(id == null){
             JSONArray.toJSONString(
                     ResponseVo.builder()
-                            .code("0x455")
-                            .message("参数为null")
+                            .code(PARAMETER_ERROR)
+                            .message(PARAMETER_MESSAGE)
                             .data(null)
                             .build()
             );
@@ -119,6 +123,17 @@ public class CommunityController {
     @ApiOperation("查看指定社团所有人员信息")
     public String queryUserByCommunity(@PathVariable Long communityId){
         return JSONArray.toJSONString(communityService.queryUserByCommunity(communityId));
+    }
+
+    /**
+     * @author hln 2024-8-26
+     *      查看所有社团
+     * @return
+     */
+    @GetMapping("/queryCommunityAll/{page}/{limit}/{name}")
+    @ApiOperation("查看所有社团")
+    public String queryCommunityAll(@PathVariable Long page,@PathVariable Long limit,@PathVariable String name){
+        return JSONArray.toJSONString(communityService.queryCommunityAll(page,limit,name));
     }
 
 }
