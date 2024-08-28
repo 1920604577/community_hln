@@ -1,6 +1,7 @@
 package com.gsxy.core.mapper;
 
 import com.gsxy.core.pojo.Channel;
+import com.gsxy.core.pojo.enums.ChannelTypeEnum;
 import com.gsxy.core.pojo.vo.ChannelVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -19,7 +20,7 @@ public interface ChannelMapper {
 
     Long delete(Long id);
 
-    List<ChannelVo> queryChannelLike(Long page, Long limit, Long communityId, String name);
+    List<ChannelVo> queryChannelLike(Long page, Long limit, Long communityId, String name, ChannelTypeEnum typeEnum);
 
-    Long queryCommunityCount(Long communityId, String name);
+    Long queryCommunityCount(Long communityId, String name, ChannelTypeEnum typeEnum);
 }

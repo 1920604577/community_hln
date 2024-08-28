@@ -55,4 +55,6 @@ public interface UserMapper {
     List<UserVo> queryPageUser(Long page, Long limit);
 
     Long queryPageUserCount(Long page, Long limit);
+
+    List<User> queryAll(Long loginUserId);
 }

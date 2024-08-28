@@ -1,5 +1,6 @@
 package com.gsxy.core.pojo;
 
+import com.gsxy.core.pojo.enums.ChannelTypeEnum;
 import lombok.*;
 
 import java.io.Serializable;
@@ -26,6 +27,10 @@ public class Channel implements Serializable {
      * 通道名称
      */
     private String name;
+    /**
+     * 通道名称
+     */
+    private ChannelTypeEnum typeEnum;
 /**
      * 社团id
      */

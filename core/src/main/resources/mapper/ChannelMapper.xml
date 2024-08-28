@@ -7,9 +7,17 @@
     <insert id="add">
         insert into
             channel
-            (community_id,created_by,created_time,name)
+            (
+             <if test="communityId != null">
+                 community_id,
+             </if>
+             created_by,created_time,name,type)
         values
-            (#{communityId},#{createdBy},#{createdTime},#{name})
+            (
+            <if test="communityId != null">
+                #{communityId},
+            </if>
+             #{createdBy},#{createdTime},#{name},#{typeEnum})
     </insert>
 
     <update id="update">
@@ -51,8 +59,12 @@
             <if test="name != null and name != '' and name != '-1'">
                 and name like concat('%',#{name},'%')
             </if>
-                and community_id = #{communityId}
-            limit #{page},#{limit}
+        <if test="communityId != null and communityId != '' and communityId != '-1'">
+            and community_id = #{communityId}
+        </if>
+        and
+            type = #{typeEnum}
+        limit #{page},#{limit}
     </select>
 
     <select id="queryCommunityCount" resultType="java.lang.Long">
@@ -65,7 +77,11 @@
         <if test="name != null and name != '' and name != '-1'">
             and name like concat('%',#{name},'%')
         </if>
-        and community_id = #{communityId}
+        <if test="communityId != null and communityId != '' and communityId != '-1'">
+            and community_id = #{communityId}
+        </if>
+        and
+        type = #{typeEnum}
     </select>
 
 </mapper>

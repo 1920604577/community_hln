@@ -31,6 +31,8 @@
             permission
         where
             del_flag = 0
+        and
+            id != 1
         limit
             #{page},
             #{limit}
@@ -43,6 +45,8 @@
             permission
         where
             del_flag = 0
+        and
+            id != 1
         limit
             #{page},
             #{limit}

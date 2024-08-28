@@ -63,7 +63,7 @@ public class ChannelController {
      * @return
      */
     @GetMapping("/queryChannelByPage/{page}/{limit}/{communityId}/{name}")
-    @ApiOperation("删除通道")
+    @ApiOperation("通道列表")
     public String queryChannelByPage(@PathVariable Long page,@PathVariable Long limit,@PathVariable Long communityId,@PathVariable String name){
         return JSONArray.toJSONString(channelService.queryChannelByPage(page,limit,communityId,name));
     }

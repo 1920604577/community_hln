@@ -221,13 +221,22 @@ public class ApplyServiceImpl implements ApplyService {
                         .roleId(4L)
                         .build();
                 userServiceImpl.addUserRolePermission(userRolePermissionTeacher);
+                //将社长添加入社团人员数据
                 CommunityUser communityUser = CommunityUser.builder()
                         .createdTime(new Date())
-                        .communityId(communityId)
+                        .communityId(community.getId())
                         .userId(community.getCreatedBy())
                         .createdBy(community.getCreatedBy())
                         .build();
                 communityUserMapper.add(communityUser);
+                //将指导教师添加入社团人员数据
+                CommunityUser communityTeacher = CommunityUser.builder()
+                        .createdTime(new Date())
+                        .communityId(community.getId())
+                        .userId(community.getTeacherId())
+                        .createdBy(community.getCreatedBy())
+                        .build();
+                communityUserMapper.add(communityTeacher);
 
                 //以上流程都没有问题后发送通知
                 noticeServiceImpl.addNotice(

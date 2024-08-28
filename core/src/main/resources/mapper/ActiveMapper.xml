@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gsxy.core.mapper.ActiveMapper">
+
+    <insert id="add" parameterType="com.gsxy.core.pojo.Active" useGeneratedKeys="true" keyProperty="id">
+        insert into
+        active
+            (title,message,start_time,end_time,channel_id,created_by,created_time,type
+            <if test="filePath != null and filePath != ''">
+                ,file_path
+            </if>
+            )
+        values
+            (#{title},#{message},#{startTime},#{endTime},#{channelId},#{createdBy},#{createdTime},#{type}
+            <if test="filePath != null and filePath != ''">
+                ,#{filePath}
+            </if>
+            )
+    </insert>
+
+    <update id="update">
+        update
+            active
+        <set>
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="message != null and message != ''">
+                message = #{message},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime},
+            </if>
+            <if test="channelId != null">
+                channel_id = #{channelId},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="updatedBy != null">
+                updated_by = #{updatedBy},
+            </if>
+            <if test="updatedTime != null">
+                updated_time = #{updatedTime}
+            </if>
+        </set>
+        where
+            id = #{id}
+        limit 1
+    </update>
+
+    <update id="deleteActive">
+        update
+        active
+        set
+            del_flag = 1
+        where
+            id = #{id}
+        limit 1
+    </update>
+
+    <select id="queryActiveByPage" resultType="com.gsxy.core.pojo.vo.ActiveVo">
+        select
+            *
+        from
+            active
+        where
+            del_flag = 0
+            <if test="title != null and title != '' and title != -1">
+                and
+                title like CONCAT('%',#{title},'%')
+            </if>
+            <if test="typeEnum != null and typeEnum != -1">
+                and
+                type = #{typeEnum}
+            </if>
+        and
+            channel_id = #{channelId}
+        order by
+            created_time desc
+        limit #{page},#{limit}
+    </select>
+
+    <select id="queryActiveByPageCount" resultType="java.lang.Long">
+        select
+        count(id)
+        from
+        active
+        where
+        del_flag = 0
+        <if test="title != null and title != '' and title != -1">
+            and
+            title like CONCAT('%',#{title},'%')
+        </if>
+        <if test="typeEnum != null and typeEnum != -1">
+            and
+            type = #{typeEnum}
+        </if>
+        and
+        channel_id = #{channelId}
+        order by
+        created_time desc
+    </select>
+
+</mapper>

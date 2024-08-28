@@ -45,4 +45,16 @@
             cu.user_id != #{loginUserId}
     </select>
 
+    <select id="queryUserIdByCommunityId" resultType="com.gsxy.core.pojo.CommunityUser">
+        select
+            *
+        from
+            community_user
+        where
+            community_id = #{communityId}
+        and
+            user_id != #{loginUserId}
+    </select>
+
+
 </mapper>

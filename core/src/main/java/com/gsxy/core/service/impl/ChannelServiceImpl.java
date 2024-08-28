@@ -3,15 +3,16 @@ package com.gsxy.core.service.impl;
 import com.gsxy.core.mapper.ChannelMapper;
 import com.gsxy.core.mapper.UserMapper;
 import com.gsxy.core.pojo.Channel;
-import com.gsxy.core.pojo.UserInfo;
 import com.gsxy.core.pojo.UserRolePermission;
 import com.gsxy.core.pojo.bo.ChannelAddBo;
+import com.gsxy.core.pojo.enums.ChannelTypeEnum;
 import com.gsxy.core.pojo.vo.ChannelVo;
 import com.gsxy.core.pojo.vo.ResponseVo;
 import com.gsxy.core.service.ChannelService;
 import com.gsxy.core.util.LoginUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Date;
@@ -30,49 +31,77 @@ public class ChannelServiceImpl implements ChannelService {
     private UserMapper userMapper;
 
     @Override
+    @Transactional
     public ResponseVo addChannel(ChannelAddBo channelAddBo) {
 
         Long loginUserId = LoginUtils.getLoginUserId();
         UserRolePermission userRolePermission = userMapper.queryUserRoleId(loginUserId);
 
         //鉴权
-        if(userRolePermission.getRoleId() != 3L){
-            return ResponseVo.builder()
-                    .code(ERROR_ROLE_CODE)
-                    .message(ERROR_ROLE_MESSAGE)
-                    .data(null)
-                    .build();
-        }
+        if(userRolePermission.getRoleId() == 1L){
+            Long isSuccess = null;
+            //看看用户信息是否已经存在
+            Channel channel = channelMapper.queryIsHave(channelAddBo.getId());
+            if (ObjectUtils.isEmpty(channel)) {
+                isSuccess = channelMapper.add(
+                        Channel.builder()
+                                .name(channelAddBo.getName())
+                                .createdTime(new Date())
+                                .createdBy(loginUserId)
+                                .typeEnum(ChannelTypeEnum.ADMIN)
+                                .build()
+                );
+            } else {
+                isSuccess = channelMapper.update(
+                        Channel.builder()
+                                .id(channel.getId())
+                                .updatedBy(loginUserId)
+                                .updatedTime(new Date())
+                                .typeEnum(ChannelTypeEnum.ADMIN)
+                                .name(channelAddBo.getName() == null ? null : channelAddBo.getName())
+                                .build()
+                );
+            }
 
-        Long isSuccess = null;
-        //看看用户信息是否已经存在
-        Channel channel = channelMapper.queryIsHave(channelAddBo.getId());
-        if (ObjectUtils.isEmpty(channel)) {
-            isSuccess = channelMapper.add(
-                    Channel.builder()
-                            .name(channelAddBo.getName())
-                            .createdTime(new Date())
-                            .createdBy(loginUserId)
-                            .communityId(channelAddBo.getCommunityId())
-                            .build()
-            );
-        } else {
-            isSuccess = channelMapper.update(
-                    Channel.builder()
-                            .id(channel.getId())
-                            .updatedBy(loginUserId)
-                            .updatedTime(new Date())
-                            .name(channelAddBo.getName() == null ? null : channelAddBo.getName())
-                            .build()
-            );
-        }
+            if(!ObjectUtils.isEmpty(isSuccess) && isSuccess == 0L){
+                return ResponseVo.builder()
+                        .code(ERROR_CODE)
+                        .data(null)
+                        .message(ERROR_MESSAGE)
+                        .build();
+            }
+        } else if (userRolePermission.getRoleId() == 3L) {
+            Long isSuccess = null;
+            //看看用户信息是否已经存在
+            Channel channel = channelMapper.queryIsHave(channelAddBo.getId());
+            if (ObjectUtils.isEmpty(channel)) {
+                isSuccess = channelMapper.add(
+                        Channel.builder()
+                                .name(channelAddBo.getName())
+                                .createdTime(new Date())
+                                .createdBy(loginUserId)
+                                .typeEnum(ChannelTypeEnum.COMMUNITY)
+                                .communityId(channelAddBo.getCommunityId())
+                                .build()
+                );
+            } else {
+                isSuccess = channelMapper.update(
+                        Channel.builder()
+                                .id(channel.getId())
+                                .updatedBy(loginUserId)
+                                .updatedTime(new Date())
+                                .name(channelAddBo.getName() == null ? null : channelAddBo.getName())
+                                .build()
+                );
+            }
 
-        if(!ObjectUtils.isEmpty(isSuccess) && isSuccess == 0L){
-            return ResponseVo.builder()
-                    .code(ERROR_CODE)
-                    .data(null)
-                    .message(ERROR_MESSAGE)
-                    .build();
+            if(!ObjectUtils.isEmpty(isSuccess) && isSuccess == 0L){
+                return ResponseVo.builder()
+                        .code(ERROR_CODE)
+                        .data(null)
+                        .message(ERROR_MESSAGE)
+                        .build();
+            }
         }
 
         return ResponseVo.builder()
@@ -117,15 +146,32 @@ public class ChannelServiceImpl implements ChannelService {
     public ResponseVo queryChannelByPage(Long page, Long limit, Long communityId,String name) {
 
         page = (page - 1) * limit;
-        List<ChannelVo> channelVoLists = channelMapper.queryChannelLike(page,limit,communityId,name)
-                .stream().map(
-                        channel -> {
-                            channel.setCreatedByText(userMapper.queryUser(userMapper.queryUserById(channel.getCreatedBy()).getStudentId()).getName());
-                            channel.setUpdatedByText(userMapper.queryUser(userMapper.queryUserById(channel.getUpdatedBy()).getStudentId()).getName());
-                            return channel;
-                        }
-                ).collect(Collectors.toList());
-        Long count = channelMapper.queryCommunityCount(communityId,name);
+        List<ChannelVo> channelVoLists = null;
+        Long count = null;
+        Long loginUserId = LoginUtils.getLoginUserId();
+        UserRolePermission userRolePermission = userMapper.queryUserRoleId(loginUserId);
+
+        if(userRolePermission.getRoleId() == 1L){
+            channelVoLists = channelMapper.queryChannelLike(page,limit,communityId,name,ChannelTypeEnum.ADMIN)
+                    .stream().map(
+                            channel -> {
+                                channel.setCreatedByText(userMapper.queryUser(userMapper.queryUserById(channel.getCreatedBy()).getStudentId()).getName());
+                                channel.setUpdatedByText(channel.getUpdatedBy() == null ? null : userMapper.queryUser(userMapper.queryUserById(channel.getUpdatedBy()).getStudentId()).getName());
+                                return channel;
+                            }
+                    ).collect(Collectors.toList());
+            count = channelMapper.queryCommunityCount(communityId,name,ChannelTypeEnum.ADMIN);
+        } else if (userRolePermission.getRoleId() == 3L) {
+            channelVoLists = channelMapper.queryChannelLike(page,limit,communityId,name,ChannelTypeEnum.COMMUNITY)
+                    .stream().map(
+                            channel -> {
+                                channel.setCreatedByText(userMapper.queryUser(userMapper.queryUserById(channel.getCreatedBy()).getStudentId()).getName());
+                                channel.setUpdatedByText(channel.getUpdatedBy() == null ? null : userMapper.queryUser(userMapper.queryUserById(channel.getUpdatedBy()).getStudentId()).getName());
+                                return channel;
+                            }
+                    ).collect(Collectors.toList());
+            count = channelMapper.queryCommunityCount(communityId,name, ChannelTypeEnum.COMMUNITY);
+        }
 
         return ResponseVo.builder()
                 .data(channelVoLists)

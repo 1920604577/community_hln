@@ -2,6 +2,7 @@ package com.gsxy.core.controller;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.gsxy.core.pojo.bo.ChannelAddBo;
+import com.gsxy.core.pojo.bo.NoticeAddAllBo;
 import com.gsxy.core.pojo.bo.NoticeAddBo;
 import com.gsxy.core.pojo.vo.ResponseVo;
 import com.gsxy.core.service.ChannelService;
@@ -51,10 +52,33 @@ public class NoticeController {
      *      通知列表（指定收件人）
      * @return
      */
-    @GetMapping("/queryNoticeByPageLike/{page}/{limit}/{communityId}")
+    @GetMapping("/queryNoticeByPageLike/{page}/{limit}/{communityId}/{type}")
     @ApiOperation("通知列表")
-    public String queryNoticeByPageLike(@PathVariable Long page,@PathVariable Long limit,@PathVariable Long communityId){
-        return JSONArray.toJSONString(noticeService.queryNoticeByPageLike(page,limit,communityId));
+    public String queryNoticeByPageLike(@PathVariable Long page,@PathVariable Long limit,@PathVariable Long communityId,@PathVariable String type){
+        return JSONArray.toJSONString(noticeService.queryNoticeByPageLike(page,limit,communityId,type));
+    }
+
+    /**
+     * @author hln 2024-8-28
+     *      创建全体通知
+     * @param noticeAddAllBo
+     * @return
+     */
+    @PostMapping("/addAllNotice")
+    @ApiOperation("创建全体通知")
+    public String addAllNotice(@RequestBody NoticeAddAllBo noticeAddAllBo){
+
+        if(noticeAddAllBo == null){
+            JSONArray.toJSONString(
+                    ResponseVo.builder()
+                            .code(PARAMETER_ERROR)
+                            .message(PARAMETER_MESSAGE)
+                            .data(null)
+                            .build()
+            );
+        }
+
+        return JSONArray.toJSONString(noticeService.addAllNotice(noticeAddAllBo));
     }
 
 }
