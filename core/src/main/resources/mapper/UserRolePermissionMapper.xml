@@ -35,16 +35,16 @@
         update
             user_role_permission
         <set>
-            <if test="userId != null and userId != ''">
+            <if test="userId != null">
                 user_id = #{userId},
             </if>
             <if test="permission != null and permission != ''">
                 permission = #{permission},
             </if>
-            <if test="roleId != null and roleId != ''">
+            <if test="roleId != null">
                 role_id = #{roleId},
             </if>
-            <if test="createdBy != null and createdBy != ''">
+            <if test="createdBy != null">
                 updated_by = #{createdBy},
             </if>
             <if test="createdTime != null">
@@ -55,8 +55,11 @@
             id = #{id}
         and
             del_flag = 0
-        and
+        <if test="communityId != null">
+            and
             community_id = #{communityId}
+        </if>
+        limit 1
     </update>
 
     <update id="deleteUserRolePermission">
@@ -76,8 +79,25 @@
             del_flag = 1
         where
             created_by = #{createdBy}
+        <if test="communityId != null">
             and
             community_id = #{communityId}
+        </if>
+        limit 1
     </update>
+
+    <select id="queryIsHave" resultType="java.lang.Long">
+        select
+            id
+        from
+            user_role_permission
+        where
+            user_id = #{userId}
+        <if test="communityId != null">
+            and
+            community_id = #{communityId}
+        </if>
+        limit 1
+    </select>
 
 </mapper>

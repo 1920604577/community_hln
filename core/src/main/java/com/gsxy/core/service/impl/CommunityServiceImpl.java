@@ -263,6 +263,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
+    @Transactional
     public ResponseVo joinCommunity(Long communityId) {
 
         Long loginUserId = LoginUtils.getLoginUserId();
@@ -302,7 +303,7 @@ public class CommunityServiceImpl implements CommunityService {
                         .title("加入社团申请")
                         .type(NoticeTypeEnum.COMMUNITY)
                         .communityId(communityId)
-                        .receiveUserId(communityMapper.queryCommunityById(communityId).getCreatedBy())
+                        .receiveUserId(communityMapper.queryCommunityByCommunityId(communityId).getCreatedBy())
                         .build()
         );
 
@@ -314,6 +315,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
+    @Transactional
     public ResponseVo quitCommunity(Long communityId) {
 
         Long loginUserId = LoginUtils.getLoginUserId();
@@ -353,7 +355,7 @@ public class CommunityServiceImpl implements CommunityService {
                         .title("退社申请")
                         .communityId(communityId)
                         .type(NoticeTypeEnum.COMMUNITY)
-                        .receiveUserId(communityMapper.queryCommunityById(communityId).getCreatedBy())
+                        .receiveUserId(communityMapper.queryCommunityByCommunityId(communityId).getCreatedBy())
                         .build()
         );
 

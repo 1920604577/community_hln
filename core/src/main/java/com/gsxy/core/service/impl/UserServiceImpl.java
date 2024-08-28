@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
 
         if(!ObjectUtils.isEmpty(isReg)){
             return ResponseVo.builder()
-                    .message("用户名已存在")
+                    .message("该学号已经被注册过账号")
                     .data(null)
                     .code("400")
                     .build();
@@ -180,14 +180,14 @@ public class UserServiceImpl implements UserService {
         UserRolePermission userRolePermission = UserRolePermission.builder()
                 .createdBy(loginUserId)
                 .createdTime(new Date())
-                .communityId(userRolePermissionAddBo.getCommunityId())
+                .communityId(userRolePermissionAddBo.getCommunityId() == null ? null : userRolePermissionAddBo.getCommunityId())
                 .roleId(userRolePermissionAddBo.getRoleId())
                 .userId(userRolePermissionAddBo.getUserId())
                 .permission(userRolePermissionAddBo.getPermission())
                 .build();
 
         //先确认该用户有无绑定记录 有的话走修改接口 ，无就走添加接口
-        Long isHaveId = userRolePermissionMapper.queryIsHave(userRolePermission.getUserId());
+        Long isHaveId = userRolePermissionMapper.queryIsHave(userRolePermission);
 
         Long isSuccess = null;
         if (ObjectUtils.isEmpty(isHaveId) || isHaveId == 0L) {
@@ -215,6 +215,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseVo deletePermission(Long id) {
 
+
+
         Long isSuccess = permissionMapper.deletePermission(id);
 
         if(!ObjectUtils.isEmpty(isSuccess) && isSuccess == 0L){
@@ -235,6 +237,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseVo queryPagePermission(Long page, Long limit) {
 
+        boolean haveRole = LoginUtils.isHaveRole(userMapper);
+
+        if(!haveRole){
+            return ResponseVo.builder()
+                    .data(null)
+                    .message("只有最高权限管理员才有此权限")
+                    .code("412")
+                    .build();
+        }
+
         page = (page - 1) * limit;
         List<PermissionVo> permissionVoList = permissionMapper.queryPagePermission(page,limit)
                 .stream().map(vo -> {
@@ -253,6 +265,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseVo deleteRole(Long id) {
+
+        boolean haveRole = LoginUtils.isHaveRole(userMapper);
+
+        if(!haveRole){
+            return ResponseVo.builder()
+                    .data(null)
+                    .message("只有最高权限管理员才有此权限")
+                    .code("412")
+                    .build();
+        }
 
         Long isSuccess = roleMapper.deleteRole(id);
 
@@ -274,6 +296,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseVo queryPageRole(Long page, Long limit) {
 
+        boolean haveRole = LoginUtils.isHaveRole(userMapper);
+
+        if(!haveRole){
+            return ResponseVo.builder()
+                    .data(null)
+                    .message("只有最高权限管理员才有此权限")
+                    .code("412")
+                    .build();
+        }
+
         page = (page - 1) * limit;
         List<RoleVo> roleVo = roleMapper.queryPageRole(page,limit)
                 .stream().map(vo -> {
@@ -292,6 +324,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseVo updateRole(RoleUpdateBo roleUpdateBo) {
+
+        boolean haveRole = LoginUtils.isHaveRole(userMapper);
+
+        if(!haveRole){
+            return ResponseVo.builder()
+                    .data(null)
+                    .message("只有最高权限管理员才有此权限")
+                    .code("412")
+                    .build();
+        }
 
         Long loginUserId = LoginUtils.getLoginUserId();
         Role role = Role.builder()

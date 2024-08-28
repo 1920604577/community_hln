@@ -37,6 +37,9 @@
             del_flag = 0
         and
             receive_user_id = #{receiveUserId}
+        order by
+            created_time
+        desc
         limit #{page},#{limit}
     </select>
 
@@ -51,6 +54,9 @@
             del_flag = 0
           and
             receive_user_id = #{receiveUserId}
+        order by
+            created_time
+        desc
         limit #{page},#{limit}
     </select>
 

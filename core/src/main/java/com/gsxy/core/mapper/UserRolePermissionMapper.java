@@ -11,8 +11,7 @@ public interface UserRolePermissionMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     Long addUserRolePermission(UserRolePermission userRolePermission);
 
-    @Select("select id from user_role_permission where user_id = #{userId} limit 1")
-    Long queryIsHave(Long userId);
+    Long queryIsHave(UserRolePermission userRolePermission);
 
     Long updateUserRolePermission(UserRolePermission userRolePermission);
 

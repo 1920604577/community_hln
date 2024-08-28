@@ -301,7 +301,7 @@ public class ApplyServiceImpl implements ApplyService {
                                 .title("修改社团申请回应")
                                 .type(NoticeTypeEnum.ADMIN)
                                 .communityId(community.getId())
-                                .receiveUserId(community.getCreatedBy())
+                                .receiveUserId(communityMapper.queryCommunityByCommunityId(communityId).getCreatedBy())
                                 .build()
                 );
             } else if (type.equals("DESTROY_COMMUNITY")) {//注销社团
@@ -317,7 +317,7 @@ public class ApplyServiceImpl implements ApplyService {
                                 .title("注销社团申请回应")
                                 .communityId(communityId)
                                 .type(NoticeTypeEnum.ADMIN)
-                                .receiveUserId(communityMapper.queryCommunityById(communityId).getCreatedBy())
+                                .receiveUserId(communityMapper.queryCommunityByCommunityId(communityId).getCreatedBy())
                                 .build()
                 );
             } else {
@@ -365,7 +365,7 @@ public class ApplyServiceImpl implements ApplyService {
                                 .title("加入社团申请回应")
                                 .communityId(communityId)
                                 .type(NoticeTypeEnum.COMMUNITY)
-                                .receiveUserId(communityMapper.queryCommunityById(communityId).getCreatedBy())
+                                .receiveUserId(communityMapper.queryCommunityByCommunityId(communityId).getCreatedBy())
                                 .build()
                 );
             } else if (type.equals("QUIT_COMMUNITY")) {//退出社团
@@ -382,7 +382,7 @@ public class ApplyServiceImpl implements ApplyService {
                                 .title("退出社团申请回应")
                                 .communityId(communityId)
                                 .type(NoticeTypeEnum.COMMUNITY)
-                                .receiveUserId(communityMapper.queryCommunityById(communityId).getCreatedBy())
+                                .receiveUserId(communityMapper.queryCommunityByCommunityId(communityId).getCreatedBy())
                                 .build()
                 );
             }

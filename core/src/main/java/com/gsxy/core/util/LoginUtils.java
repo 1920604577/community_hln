@@ -1,6 +1,8 @@
 package com.gsxy.core.util;
 
 import com.gsxy.core.mapper.UserMapper;
+import com.gsxy.core.pojo.UserRolePermission;
+import com.gsxy.core.pojo.vo.ResponseVo;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class LoginUtils {
@@ -26,4 +28,19 @@ public class LoginUtils {
         return userPermission + "," + userRolePermission;
     }
 
+    /**
+     * @author hln - 2024-8-28
+     * 该方法用来判断当前用户是否有admin权限（最高管理员）
+     * @return
+     */
+    public static boolean isHaveRole(UserMapper userMapper){
+        Long loginUserId = LoginUtils.getLoginUserId();
+        UserRolePermission userRolePermission = userMapper.queryUserRoleId(loginUserId);
+
+        if(userRolePermission.getRoleId() != 1L){
+            return false;
+        }
+
+        return true;
+    }
 }
