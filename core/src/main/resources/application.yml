@@ -23,6 +23,11 @@ spring:
         max-wait: -1    #最大阻塞等待时间(负数表示没限制)
         max-idle: 5    #最大空闲
         min-idle: 0     #最小空闲
+  autoconfigure:
+    isMinio: true
+    isRedis: true
+    isRedisson: true
+
 #  error:
 #    include-stacktrace: never
 #    whitelabel:
@@ -30,6 +35,18 @@ spring:
 server:
   port: 8005
 
+
+# 文件上传存储服务器
+minio:
+  # MinIO服务器地址
+  endpoint: http://127.0.0.1:9000
+  # MinIO服务器访问凭据
+  accessKey: minioadmin
+  secretKey: minioadmin
+  # MinIO桶名称
+  bucket: hln-gs-community
+  # MinIO读取路径前缀
+  readPath: http://127.0.0.1:9000
 
 # 选择api项目下的resouces路径下的user文件夹
 # filePath: "/Users/yangyida/Documents/project/complaint_system/web-server/src/main/resources/img/user/"

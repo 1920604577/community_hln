@@ -3,9 +3,11 @@ package com.gsxy.core.pojo.bo;
 import com.gsxy.core.pojo.enums.ActiveTypeEnum;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,9 +26,9 @@ public class ActiveAddBo implements Serializable {
     @ApiModelProperty(value = "通道id", example = "通道id")
     private Long channelId;
     @ApiModelProperty(value = "附件文件路径", example = "附件文件路径")
-    private String filePath;
+    private List<MultipartFile> filePath;
     @ApiModelProperty(value = "附件文件路径（原有的）", example = "附件文件路径（原有的）")
-    private String filePathOld;
+    private List<MultipartFile> filePathOld;
     @ApiModelProperty(value = "开始时间", example = "开始时间")
     private Date startTime;
     @ApiModelProperty(value = "活动时间", example = "活动时间")

@@ -1,5 +1,6 @@
 package com.gsxy.core.service.impl;
 
+import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.gsxy.core.mapper.ApplyMapper;
 import com.gsxy.core.mapper.CommunityMapper;
@@ -8,24 +9,34 @@ import com.gsxy.core.mapper.UserMapper;
 import com.gsxy.core.pojo.*;
 import com.gsxy.core.pojo.bo.CommunityAddBo;
 import com.gsxy.core.pojo.bo.CommunityUpdateBo;
+import com.gsxy.core.pojo.bo.FunctionExcelBo;
 import com.gsxy.core.pojo.bo.NoticeAddBo;
 import com.gsxy.core.pojo.enums.CommunityStatusEnum;
 import com.gsxy.core.pojo.enums.CommunityTypeEnum;
 import com.gsxy.core.pojo.enums.NoticeTypeEnum;
 import com.gsxy.core.pojo.vo.CommunityUserInfoVo;
+import com.gsxy.core.pojo.vo.CommunityUserVo;
 import com.gsxy.core.pojo.vo.CommunityVo;
 import com.gsxy.core.pojo.vo.ResponseVo;
 import com.gsxy.core.service.CommunityService;
 import com.gsxy.core.util.LoginUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.gsxy.core.pojo.enums.CodeValues.SUCCESS_CODE;
+import static com.gsxy.core.pojo.enums.MessageValues.SUCCESS_MESSAGE;
+import static com.gsxy.core.pojo.enums.RedisKeys.UPDATE_COMMUNITY_KEY;
 
 @Service
 public class CommunityServiceImpl implements CommunityService {
@@ -172,7 +183,7 @@ public class CommunityServiceImpl implements CommunityService {
 
         RedisTemplate<String, Object> template = redisTemplate; // 获取RedisTemplate实例
         HashOperations<String, String, Object> hashOps = template.opsForHash();
-        String key = "update:community:" + communityUpdateBo.getId(); // 以社团ID作为主键
+        String key = UPDATE_COMMUNITY_KEY + communityUpdateBo.getId(); // 以社团ID作为主键
         hashOps.put(key, "name", communityUpdateBo.getName());
         hashOps.put(key, "id", communityUpdateBo.getId());
         hashOps.put(key, "description", communityUpdateBo.getDiscription());
@@ -413,10 +424,61 @@ public class CommunityServiceImpl implements CommunityService {
         Long count = communityMapper.queryCommunityCount(CommunityStatusEnum.ENABLE,name);
 
         return ResponseVo.builder()
-                .code("200")
-                .data(communityVoLists)
-                .message("查询成功")
+                .data(null)
                 .count(count)
+                .data(communityVoLists)
+                .code(SUCCESS_CODE)
+                .message(SUCCESS_MESSAGE)
+                .build();
+    }
+
+    @Override
+    public ResponseVo exportData(HttpServletResponse response, Long communityId) {
+        //1.设置响应头信息和其他信息
+        try {
+            // 设置响应结果类型
+            response.setContentType("application/vnd.ms-excel");
+            response.setCharacterEncoding("utf-8");
+
+            // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+            String fileName = URLEncoder.encode("分类数据", "UTF-8");
+
+            //设置响应头
+            response.setHeader("Content-disposition","attachment;filename=" + fileName + ".xlsx");
+            response.setHeader("Access-Control-Expose-Headers","Content-disposition");
+            //查询所有分类，返回list集合
+            List<CommunityUserVo> stuList = communityUserMapper.queryUserVoByCommunityId(communityId)
+                    .stream().map(
+                            vo -> {
+                                return CommunityUserVo.builder()
+                                        .stuId(vo.getStuId().substring(1))
+                                        .name(vo.getName())
+                                        .org(vo.getGrade() + "级" + vo.getProfessional() + vo.getOrg() + "班")
+                                        .build();
+                            }
+                    ).collect(Collectors.toList());
+
+            //最终数据list集合
+            List<FunctionExcelBo> functionExcelBoList = new ArrayList<>();
+
+            for (CommunityUserVo communityUserVo : stuList) {
+                FunctionExcelBo functionExcelBo = new FunctionExcelBo();
+                BeanUtils.copyProperties(communityUserVo, functionExcelBo);
+                functionExcelBoList.add(functionExcelBo);
+            }
+
+            //写入操作
+            EasyExcel.write(response.getOutputStream(), FunctionExcelBo.class)
+                    .sheet("数据").doWrite(functionExcelBoList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+        return ResponseVo.builder()
+                .data(null)
+                .code(SUCCESS_CODE)
+                .message(SUCCESS_MESSAGE)
                 .build();
     }
 }

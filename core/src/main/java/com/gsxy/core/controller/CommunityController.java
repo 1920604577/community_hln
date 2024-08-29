@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
 import static com.gsxy.core.pojo.enums.CodeValues.PARAMETER_ERROR;
 import static com.gsxy.core.pojo.enums.MessageValues.PARAMETER_MESSAGE;
 
@@ -134,6 +136,17 @@ public class CommunityController {
     @ApiOperation("查看所有社团")
     public String queryCommunityAll(@PathVariable Long page,@PathVariable Long limit,@PathVariable String name){
         return JSONArray.toJSONString(communityService.queryCommunityAll(page,limit,name));
+    }
+
+    /**
+     * @author hln 2024-8-29
+     *      导出社团成员列表
+     * @return
+     */
+    @ApiOperation("文件下载")
+    @GetMapping("/exportData/{communityId}")
+    public String exportData(HttpServletResponse response, @PathVariable Long communityId) {
+        return JSONArray.toJSONString(communityService.exportData(response,communityId));
     }
 
 }

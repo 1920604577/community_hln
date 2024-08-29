@@ -3,6 +3,8 @@ package com.gsxy.core.mapper;
 import com.gsxy.core.pojo.CommunityUser;
 import com.gsxy.core.pojo.bo.NoticeAddAllBo;
 import com.gsxy.core.pojo.vo.CommunityUserInfoVo;
+import com.gsxy.core.pojo.vo.CommunityUserVo;
+import com.gsxy.core.pojo.vo.CommunityUserVoTemp;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
@@ -21,4 +23,6 @@ public interface CommunityUserMapper {
     List<CommunityUserInfoVo> queryUserByCommunityId(Long communityId, Long loginUserId);
 
     List<CommunityUser> queryUserIdByCommunityId(Long communityId, Long loginUserId);
+
+    List<CommunityUserVoTemp> queryUserVoByCommunityId(Long communityId);
 }

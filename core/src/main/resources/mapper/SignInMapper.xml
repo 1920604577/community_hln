@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gsxy.core.mapper.SignInMapper">
+
+    <insert id="add" parameterType="com.gsxy.core.pojo.SignIn" useGeneratedKeys="true" keyProperty="id">
+        insert into
+        sign_in
+            (title,message,time_len,created_by,created_time,community_id)
+        values
+            (#{title},#{message},#{timeLen},#{createdBy},#{createdTime},#{communityId})
+    </insert>
+
+    <insert id="signIn" parameterType="com.gsxy.core.pojo.SignInUser" useGeneratedKeys="true" keyProperty="id">
+        insert into
+        sign_in_user
+            (sign_in_id,created_by,created_time)
+        values
+            (#{signInId},#{createdBy},#{createdTime})
+    </insert>
+
+    <select id="queryAllByPage" resultType="com.gsxy.core.pojo.vo.SignInVo">
+        select
+            *
+        from
+            sign_in
+        where
+            <if test="communityId != null and communityId != '' and communityId != -1">
+                community_id = #{communityId}
+                and
+            </if>
+            del_flag = 0
+        order by
+            created_time
+        desc
+        limit #{page},#{limit}
+    </select>
+
+    <select id="queryAllByPageCount" resultType="java.lang.Long">
+        select
+        count(id)
+        from
+        sign_in
+        where
+        <if test="communityId != null and communityId != '' and communityId != -1">
+            community_id = #{communityId}
+            and
+        </if>
+        del_flag = 0
+        order by
+        created_time
+        desc
+    </select>
+
+    <select id="querySignInUserBySignInId" resultType="com.gsxy.core.pojo.vo.SignInUserVo">
+        select
+            *
+        from
+            sign_in_user
+        where
+            sign_in_id = #{signInId}
+        and
+            del_flag = 0
+    </select>
+
+    <select id="querySignInUserBySignInIdCount" resultType="java.lang.Long">
+        select
+            count(id)
+        from
+            sign_in_user
+        where
+            sign_in_id = #{signInId}
+        and
+            del_flag = 0
+    </select>
+
+</mapper>
